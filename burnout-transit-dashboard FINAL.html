@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Atelier Haus™ | Burnout Transit Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --obsidian: #0d1117;
+      --stone: #1a2130;
+      --stone-mid: #1e2a3a;
+      --stone-light: #243244;
+      --teal: #4ECFD4;
+      --teal-dim: rgba(78, 207, 212, 0.18);
+      --teal-glow: rgba(78, 207, 212, 0.5);
+      --gold: #D7B56D;
+      --gold-dim: rgba(215, 181, 109, 0.18);
+      --gold-glow: rgba(215, 181, 109, 0.6);
+      --fire: #E8621A;
+      --fire-dim: rgba(232, 98, 26, 0.15);
+      --mist: rgba(255, 255, 255, 0.07);
+      --text-primary: #FFFFFF;
+      --text-secondary: #D0D8E4;
+      --text-dim: #8A9BB0;
+      --border: rgba(78, 207, 212, 0.2);
+      --border-gold: rgba(215, 181, 109, 0.3);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--obsidian);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-size: 15px;
+    }
+
+    /* ATMOSPHERIC BACKGROUND */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(78,207,212,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 50%, rgba(215,181,109,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 30% 50% at 90% 30%, rgba(232,98,26,0.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(78,207,212,0.015) 60px, rgba(78,207,212,0.015) 61px),
+        repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(78,207,212,0.015) 60px, rgba(78,207,212,0.015) 61px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content { position: relative; z-index: 1; }
+
+    /* CIRCUIT LINES */
+    .circuit-border {
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .circuit-border::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 20px;
+      width: 40px; height: 1px;
+      background: var(--teal);
+      box-shadow: 0 0 8px var(--teal-glow);
+    }
+    .circuit-border::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; right: 20px;
+      width: 40px; height: 1px;
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold-glow);
+    }
+
+    .circuit-border-gold {
+      border: 1px solid var(--border-gold);
+      position: relative;
+    }
+    .circuit-border-gold::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 20px;
+      width: 60px; height: 1px;
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold-glow);
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: linear-gradient(180deg, rgba(8,10,14,0.98) 0%, rgba(8,10,14,0.9) 100%);
+      border-bottom: 1px solid var(--border-gold);
+      backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 100;
+    }
+
+    .navbar::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--teal), var(--gold), transparent);
+      opacity: 0.6;
+    }
+
+    .logo-ring {
+      width: 38px; height: 38px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      box-shadow: 0 0 12px var(--gold-dim), inset 0 0 12px var(--gold-dim);
+    }
+    .logo-ring::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px solid rgba(78,207,212,0.3);
+      border-radius: 50%;
+    }
+
+    /* PANELS */
+    .panel {
+      background: linear-gradient(135deg, rgba(26,33,48,0.97) 0%, rgba(30,42,58,0.97) 100%);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      background: linear-gradient(90deg, rgba(30,42,58,0.98) 0%, rgba(78,207,212,0.08) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .panel-header-gold {
+      background: linear-gradient(90deg, rgba(30,42,58,0.98) 0%, rgba(215,181,109,0.08) 100%);
+      border-bottom: 1px solid var(--border-gold);
+      padding: 1rem 1.5rem;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    /* HEADER DOT */
+    .header-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 10px var(--teal-glow);
+      flex-shrink: 0;
+    }
+    .header-dot-gold {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 10px var(--gold-glow);
+      flex-shrink: 0;
+    }
+
+    /* INTRO BLOCK */
+    .intro-panel {
+      background: linear-gradient(135deg, rgba(26,33,48,0.97) 0%, rgba(78,207,212,0.05) 50%, rgba(30,42,58,0.97) 100%);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .intro-panel::before {
+      content: 'TRANSIT SYSTEM';
+      position: absolute;
+      top: 1.5rem; right: 2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: var(--text-dim);
+      opacity: 0.6;
+    }
+
+    /* SLIDERS */
+    .slider-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      background: transparent;
+      width: 100%;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      height: 2px;
+      background: linear-gradient(90deg, rgba(78,207,212,0.15), rgba(78,207,212,0.15));
+      border-radius: 0;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 14px; width: 14px;
+      border-radius: 0;
+      transform: rotate(45deg);
+      background: var(--teal);
+      cursor: pointer;
+      margin-top: -6px;
+      box-shadow: 0 0 10px var(--teal-glow);
+    }
+
+    .score-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--teal);
+      min-width: 20px;
+      text-align: right;
+    }
+
+    /* CHART */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      height: 360px;
+      margin: 0 auto;
+    }
+
+    /* TABS */
+    .tab-scroll {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 4px;
+      scrollbar-width: none;
+    }
+    .tab-scroll::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      border-radius: 1px;
+    }
+    .tab-btn:hover { color: var(--text-primary); border-color: var(--border); }
+    .tab-btn.active {
+      background: var(--gold-dim);
+      border-color: var(--border-gold);
+      color: var(--gold);
+    }
+
+    /* STATIONS */
+    .station-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px;
+      background: var(--mist);
+      border: 1px solid var(--border);
+      border-radius: 1px;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .station-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+    }
+    .station-item:hover {
+      background: rgba(78,207,212,0.04);
+      border-color: rgba(78,207,212,0.25);
+    }
+
+    .station-icon {
+      width: 28px; height: 28px;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .station-type-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 1px;
+    }
+
+    /* SHAPES */
+    .shape-triangle {
+      width: 0; height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-bottom: 12px solid currentColor;
+    }
+    .shape-circle {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background-color: currentColor;
+    }
+    .shape-diamond {
+      width: 10px; height: 10px;
+      background-color: currentColor;
+      transform: rotate(45deg);
+    }
+    .shape-hexagon {
+      width: 14px; height: 8px;
+      background-color: currentColor;
+      position: relative; margin: 3px 0;
+    }
+    .shape-hexagon:before, .shape-hexagon:after {
+      content: '';
+      position: absolute; left: 0;
+      width: 0; height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+    }
+    .shape-hexagon:before { top: -3px; border-bottom: 3px solid currentColor; }
+    .shape-hexagon:after { bottom: -3px; border-top: 3px solid currentColor; }
+
+    /* RECOVERY PANEL */
+    .recovery-panel {
+      background: linear-gradient(135deg, rgba(26,33,48,0.97) 0%, rgba(215,181,109,0.06) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 2px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .recovery-panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .recovery-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(215,181,109,0.07);
+      border: 1px solid rgba(215,181,109,0.2);
+      border-radius: 1px;
+      margin-bottom: 8px;
+    }
+
+    /* LEGEND */
+    .legend-panel {
+      background: rgba(26,33,48,0.97);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1.5rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 1px;
+    }
+
+    /* FIRE TORCH ACCENT */
+    @keyframes flicker {
+      0%, 100% { opacity: 0.8; transform: scaleY(1); }
+      25% { opacity: 0.6; transform: scaleY(0.92); }
+      50% { opacity: 1; transform: scaleY(1.05); }
+      75% { opacity: 0.7; transform: scaleY(0.95); }
+    }
+
+    .torch-accent {
+      display: inline-block;
+      color: var(--fire);
+      animation: flicker 2s infinite;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--stone); }
+    ::-webkit-scrollbar-thumb { background: rgba(78,207,212,0.2); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(78,207,212,0.4); }
+
+    /* GLOW PULSE */
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 6px var(--teal-glow); }
+      50% { box-shadow: 0 0 16px var(--teal-glow), 0 0 32px rgba(78,207,212,0.15); }
+    }
+    .glow-pulse { animation: glow-pulse 3s infinite; }
+
+    /* VORTEX RING */
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .vortex-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(78,207,212,0.08);
+      animation: spin-slow 30s linear infinite;
+      pointer-events: none;
+    }
+
+    /* INSIGHT BOX */
+    .insight-box {
+      background: var(--teal-dim);
+      border: 1px solid rgba(78,207,212,0.25);
+      border-radius: 1px;
+      padding: 12px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--teal);
+      letter-spacing: 0.03em;
+    }
+
+    /* HEADINGS */
+    .heading-display {
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 0.02em;
+    }
+    .heading-cormorant {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    /* STATUS LINE */
+    .status-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      background: var(--teal);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--teal);
+      flex-shrink: 0;
+    }
+
+    /* SEPARATOR */
+    .teal-separator {
+      height: 1px;
+      background: linear-gradient(90deg, var(--teal), transparent);
+      opacity: 0.3;
+      margin: 16px 0;
+    }
+
+    .gold-separator {
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      opacity: 0.25;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+
+<body class="antialiased min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <nav class="navbar content py-4 px-6">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <div class="logo-ring glow-pulse">
+          <span style="font-family:'Cormorant Garamond',serif; font-size:11px; color:var(--gold); font-style:italic; font-weight:600;">VB</span>
+        </div>
+        <div>
+          <h1 class="heading-display font-bold text-lg tracking-[0.15em]" style="color:var(--text-primary);">
+            THE ATELIER HAUS™
+          </h1>
+          <div class="status-line mt-0.5">
+            <span class="status-dot"></span>
+            <span>Burnout Transit System · Signal Active</span>
+          </div>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center gap-6">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--text-dim);">TRANSIT MAP™</span>
+        <div style="width:1px; height:24px; background:var(--border-gold);"></div>
+        <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--gold);">© VB.CLARKE™</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="content flex-grow max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- INTRO -->
+    <div class="lg:col-span-12">
+      <div class="intro-panel">
+        <div class="flex items-start gap-4 mb-4">
+          <div>
+            <div class="status-line mb-2">
+              <span class="status-dot"></span>
+              <span>System Orientation · Cathedral Framework Active</span>
+            </div>
+            <h2 class="heading-display text-2xl font-bold mb-1" style="color:var(--teal);">
+              The Atelier Haus Burnout Transit System™
+            </h2>
+          </div>
+        </div>
+        <div class="teal-separator"></div>
+        <p class="heading-cormorant text-base leading-relaxed" style="color:var(--text-primary); font-size:1.15rem;">
+          Burnout doesn't happen in a straight line — it happens like a city you get lost in. The Burnout Transit Map™ is not just a map or schematic diagram; it's the overhead wiring of how burnout actually runs through a life: every line, station and dead-end drawn from real patterns of overwork, numbness, people-pleasing, quiet rage and the urge to finally get off the wrong train.
+        </p>
+        <p class="heading-cormorant mt-3 text-sm" style="color:var(--text-secondary); font-style:italic; font-size:1rem;">
+          Use this dashboard to audit your signal flow, identify which lines are carrying the heaviest load, and discover the specific stations required to stabilise your system.
+        </p>
+        <div class="gold-separator"></div>
+        <div class="status-line">
+          <span>Concept &amp; framework</span>
+          <span style="color:var(--gold);">© VB.Clarke™</span>
+          <span>·</span>
+          <span>The Cathedral System™</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEFT COLUMN -->
+    <div class="lg:col-span-5 space-y-6">
+
+      <!-- SIGNAL AUDIT -->
+      <div class="panel circuit-border">
+        <div class="panel-header">
+          <div class="header-dot"></div>
+          <h3 class="heading-display font-bold" style="color:var(--text-primary); font-size:1rem; letter-spacing:0.05em;">Signal Flow Audit</h3>
+        </div>
+        <div style="padding:8px 12px; background:rgba(78,207,212,0.04); border-bottom:1px solid var(--border);">
+          <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.1em; color:var(--teal); text-transform:uppercase;">
+            Slide 0–10 to calibrate each line
+          </span>
+        </div>
+        <div class="p-5 space-y-4" id="slider-container"></div>
+      </div>
+
+      <!-- RADAR CHART -->
+      <div class="panel circuit-border">
+        <div class="panel-header">
+          <div class="header-dot"></div>
+          <div>
+            <h3 class="heading-display font-bold" style="color:var(--text-primary); font-size:1rem; letter-spacing:0.05em;">Your Burnout Shape</h3>
+            <div class="status-line mt-0.5">
+              <span>Real-time System Analysis</span>
+            </div>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="chart-container">
+            <canvas id="radarChart"></canvas>
+          </div>
+          <div class="teal-separator"></div>
+          <div class="insight-box" id="chart-insight">
+            System suggests high load on cognitive circuits.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="lg:col-span-7 space-y-6">
+
+      <!-- ROUTE EXPLORER -->
+      <div class="panel circuit-border flex flex-col" style="min-height:580px;">
+        <div class="panel-header-gold">
+          <div class="header-dot-gold"></div>
+          <h3 class="heading-display font-bold" style="color:var(--text-primary); font-size:1rem; letter-spacing:0.05em;">Route Explorer</h3>
+        </div>
+
+        <!-- TABS -->
+        <div style="background:rgba(8,10,14,0.6); border-bottom:1px solid var(--border-gold); padding:8px 12px;">
+          <div class="tab-scroll" id="line-tabs"></div>
+        </div>
+
+        <!-- ACTIVE LINE -->
+        <div class="p-5 flex flex-col flex-grow">
+          <div class="mb-5">
+            <h2 class="heading-display text-xl font-bold mb-1" id="active-line-title" style="color:var(--teal);">Trigger Line</h2>
+            <p style="font-family:'Cormorant Garamond',serif; font-size:0.95rem; color:var(--text-secondary); font-style:italic;" id="active-line-desc">
+              External and behavioral catalysts: the "why" behind the stress.
+            </p>
+            <div class="teal-separator"></div>
+          </div>
+
+          <div class="flex flex-col gap-3 flex-grow" id="station-list"></div>
+        </div>
+      </div>
+
+      <!-- RECOVERY PROTOCOL -->
+      <div class="recovery-panel">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="header-dot-gold"></div>
+          <div>
+            <h3 class="heading-display font-bold" style="color:var(--gold); letter-spacing:0.08em; font-size:0.85rem; text-transform:uppercase;">
+              Immediate Stabilisation Protocol
+            </h3>
+            <div class="status-line mt-0.5">
+              <span>Based on your highest active signal loads</span>
+            </div>
+          </div>
+        </div>
+        <div class="gold-separator"></div>
+        <div id="recovery-list"></div>
+      </div>
+
+    </div>
+
+    <!-- LEGEND -->
+    <div class="lg:col-span-12">
+      <div class="legend-panel">
+        <div class="status-line mb-4">
+          <span class="status-dot"></span>
+          <span>System Legend · Symbology Reference</span>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="legend-item">
+            <div style="color:var(--teal);"><div class="shape-triangle"></div></div>
+            <div>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); display:block;">Escalation Point</span>
+              <span style="font-family:'Cormorant Garamond',serif; font-size:11px; color:var(--text-dim); display:block; margin-top:2px;">Rising intensity signal</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div style="color:#4B5563;"><div class="shape-hexagon" style="color:var(--text-secondary);"></div></div>
+            <div>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); display:block;">High-Load Point</span>
+              <span style="font-family:'Cormorant Garamond',serif; font-size:11px; color:var(--text-dim); display:block; margin-top:2px;">System stress maximum</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div style="color:var(--gold);"><div class="shape-diamond"></div></div>
+            <div>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); display:block;">Identity Pivot</span>
+              <span style="font-family:'Cormorant Garamond',serif; font-size:11px; color:var(--text-dim); display:block; margin-top:2px;">Role / self shift required</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div style="color:var(--teal);"><div class="shape-circle" style="background:var(--teal); width:10px; height:10px; box-shadow:0 0 6px var(--teal-glow);"></div></div>
+            <div>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); display:block;">Stabilisation</span>
+              <span style="font-family:'Cormorant Garamond',serif; font-size:11px; color:var(--text-dim); display:block; margin-top:2px;">Grounding, repair, baseline</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="content py-8 mt-6 text-center" style="border-top:1px solid var(--border); background:var(--stone);">
+    <div style="font-family:'Playfair Display',serif; font-size:14px; color:var(--gold); letter-spacing:0.15em; margin-bottom:6px;">
+      THE ATELIER HAUS™
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--text-dim); text-transform:uppercase;">
+      © VB.Clarke™ · The Cathedral System™ · All route schema &amp; pattern logic asserted as © VB.Clarke™
+    </div>
+  </footer>
+
+  <script>
+    const transitData = {
+      lines: [
+        { id:"trigger", name:"Trigger Line", color:"#4ECFD4", desc:"Overgiving, people pleasing, predictions, chaos hours, sleep debt.", stations:[
+          { name:"Overgiving", type:"high-load", desc:"Taking on more than your role or pay suggests." },
+          { name:"People Pleasing", type:"identity-pivot", desc:"Saying yes while your body wants to say no." },
+          { name:"Perfectionism", type:"escalation", desc:"Work driven by fear of getting it wrong." },
+          { name:"Chaos Hours", type:"escalation", desc:"Work bleeding into every time block." },
+          { name:"Sleep Debt", type:"high-load", desc:"Chronic undersleep disguised as productivity." }
+        ]},
+        { id:"boundary", name:"Boundary Line", color:"#38bdf8", desc:"Self-respect, over-agreement, emotional labour, people pleasing.", stations:[
+          { name:"Office Hours Only", type:"stabilisation", desc:"A defined start and stop to work." },
+          { name:"Meeting Cap", type:"stabilisation", desc:"Limits on calls and Zoom fatigue." },
+          { name:"Notification Triage", type:"escalation", desc:"Turning off non-essential alerts." },
+          { name:"No Weekend Work", type:"identity-pivot", desc:"Reclaiming non-negotiable rest." }
+        ]},
+        { id:"recovery", name:"Recovery Line", color:"#14b8a6", desc:"Protein, hydration, sunlight, sleep hygiene, joy, GP check.", stations:[
+          { name:"Protein Breakfast", type:"stabilisation", desc:"Front-loading fuel for the day." },
+          { name:"Hydrate", type:"stabilisation", desc:"Actual water, not just coffee." },
+          { name:"Sunlight", type:"stabilisation", desc:"Daylight to anchor your body clock." },
+          { name:"Sleep Hygiene", type:"stabilisation", desc:"Wind-down routine and screens off." },
+          { name:"Joy or Hobby", type:"stabilisation", desc:"Play that is not about productivity." },
+          { name:"GP Check and Labs", type:"stabilisation", desc:"Rule out medical drivers." }
+        ]},
+        { id:"repair", name:"Repair Line", color:"#0f766e", desc:"Reducing stimulation, slowing output, returning to baseline.", stations:[
+          { name:"Micro-Rest Windows", type:"stabilisation", desc:"Short nervous system resets in your day." },
+          { name:"Time Away", type:"stabilisation", desc:"Actual leave, not admin plus emails." },
+          { name:"Tech Curfew", type:"stabilisation", desc:"Devices down before sleep." },
+          { name:"Workload Reset", type:"identity-pivot", desc:"Renegotiating unrealistic scope." }
+        ]},
+        { id:"biological", name:"Biological Line", color:"#a78bfa", desc:"Chest tightness, jaw clench, gut churn, numbness, brain fog.", stations:[
+          { name:"Heat or Flushes", type:"high-load", desc:"Stress or hormone related heat spikes." },
+          { name:"Racing Heart", type:"escalation", desc:"Adrenaline surges even when sitting still." },
+          { name:"Low Mood and Irritability", type:"escalation", desc:"Everything feels like too much." },
+          { name:"Gut Changes", type:"high-load", desc:"Bowel changes, reflux, nausea or churn." },
+          { name:"Brain Fog", type:"high-load", desc:"Misplacing things, losing words, slow thinking." }
+        ]},
+        { id:"dopamine", name:"Dopamine Line", color:"#D7B56D", desc:"Fatigue, apathy, low drive, emotional numbness and reward seeking.", stations:[
+          { name:"Caffeine Loop", type:"high-load", desc:"Needing stimulants to feel baseline functional." },
+          { name:"Noise and Multitasking", type:"escalation", desc:"Filling silence with constant input." },
+          { name:"Doom Scroll", type:"escalation", desc:"Endless feeds to avoid feeling." },
+          { name:"Financial Strain", type:"high-load", desc:"Chronic stress about money and security." }
+        ]},
+        { id:"leadership", name:"Leadership Sub-Line", color:"#0ea5e9", desc:"Projection, hardness, escalation ladders, invisible load, boundary collapse.", stations:[
+          { name:"Inherited Hardness", type:"identity-pivot", desc:"Leading the way you were led, not how you want to lead." },
+          { name:"Role or Hat Swapping", type:"identity-pivot", desc:"Manager, friend and fixer all at once." },
+          { name:"Feedback Window", type:"escalation", desc:"Avoiding hard conversations until they explode." },
+          { name:"Default Delegate", type:"high-load", desc:"Being the unofficial emotional bin for the team." }
+        ]},
+        { id:"mirror", name:"Mirror Line", color:"#9CA3AF", desc:"Identity threat, narrative rebuild, repair of self-respect.", stations:[
+          { name:"Self-Betrayal", type:"identity-pivot", desc:"Saying it is fine when it is not fine." },
+          { name:"Role Confusion", type:"identity-pivot", desc:"Not knowing who you are without the job." },
+          { name:"Story Rewrite", type:"stabilisation", desc:"Updating the narrative about what happened." },
+          { name:"Self-Respect Ritual", type:"stabilisation", desc:"Concrete acts of backing yourself." }
+        ]},
+        { id:"thoughts", name:"Thoughts Line", color:"#6B7280", desc:"Over-analysis, catastrophising, what-if loops, existential doubt.", stations:[
+          { name:"Catastrophising", type:"escalation", desc:"Imagining worst case as the default." },
+          { name:"Future Pacing", type:"escalation", desc:"Living inside anticipated stress." },
+          { name:"Rumination Loop", type:"high-load", desc:"Replaying the same conversation or mistake." },
+          { name:"Existential Dread", type:"high-load", desc:"Questioning the point of any of this." }
+        ]},
+        { id:"trauma", name:"Trauma Line", color:"#475569", desc:"Freeze, collapse, shutdown, emotional numbing.", stations:[
+          { name:"Freeze Response", type:"high-load", desc:"Locked, stuck, unable to act." },
+          { name:"Collapse and Numb", type:"high-load", desc:"Going offline to survive the load." },
+          { name:"Trigger Echoes", type:"escalation", desc:"Old wounds re-activated by current events." }
+        ]},
+        { id:"assessment", name:"Assessment Train", color:"#22c55e", desc:"Burnout screen, energy audit, joy list, values map, workload audit.", stations:[
+          { name:"Burnout Screen", type:"stabilisation", desc:"Quick check of where you sit on the spectrum." },
+          { name:"Energy Audit", type:"stabilisation", desc:"Where your energy actually goes versus where it should." },
+          { name:"Joy List", type:"stabilisation", desc:"Remembering what still lights you up." },
+          { name:"Values Map", type:"identity-pivot", desc:"Aligning work with what actually matters." },
+          { name:"Workload Audit", type:"high-load", desc:"Listing and rebalancing tasks on your plate." },
+          { name:"Maintenance Plan", type:"stabilisation", desc:"Your non-negotiable ongoing supports." }
+        ]},
+        { id:"stress_signal_audit", name:"Signal Load Line", color:"#6366f1", desc:"Baseline load across demands, micro-stressors, isolation, uncertainty, identity and recovery.", stations:[
+          { name:"D: Demands", type:"high-load", desc:"Workload, roles, responsibilities and emotional labour that draw on you." },
+          { name:"F: Fragmentation", type:"high-load", desc:"Too many tabs open in one nervous system and constant role switching." },
+          { name:"M: Micro-stressors", type:"escalation", desc:"Small daily frictions that stack into major load." },
+          { name:"S: Psychological Stress", type:"escalation", desc:"Worry, rumination, self-criticism and looping internal narratives." },
+          { name:"I: Inflammation", type:"high-load", desc:"Body strain, pain, fatigue, flare-ups or illness." },
+          { name:"Iso: Isolation", type:"identity-pivot", desc:"Feeling alone, unseen or unsupported, even when around others." },
+          { name:"U: Uncertainty", type:"escalation", desc:"Instability, unknowns, moving goalposts and life ambiguity." },
+          { name:"L: Identity Loss", type:"identity-pivot", desc:"Not recognising yourself outside your role or survival mode." },
+          { name:"MDef: Meaning Deficit", type:"high-load", desc:"Work or life feels empty, misaligned or purely transactional." },
+          { name:"A: Agency", type:"stabilisation", desc:"How much say and influence you have. Higher agency protects against burnout." },
+          { name:"R: Recovery", type:"stabilisation", desc:"Quality of rest, ritual, support and time off." }
+        ]}
+      ]
+    };
+
+    let appState = { scores: {}, activeLineId: "trigger" };
+    transitData.lines.forEach(l => appState.scores[l.id] = 5);
+
+    const sliderContainer = document.getElementById("slider-container");
+    const radarCanvas = document.getElementById("radarChart");
+    const lineTabsContainer = document.getElementById("line-tabs");
+    const activeLineTitle = document.getElementById("active-line-title");
+    const activeLineDesc = document.getElementById("active-line-desc");
+    const stationList = document.getElementById("station-list");
+    const recoveryList = document.getElementById("recovery-list");
+    const chartInsight = document.getElementById("chart-insight");
+
+    function init() {
+      renderSliders();
+      renderTabs();
+      renderActiveLine();
+      initChart();
+      updateRecoveryProtocol();
+    }
+
+    function renderSliders() {
+      sliderContainer.innerHTML = "";
+      transitData.lines.forEach(line => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "mb-2";
+        wrapper.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <label class="slider-label">${line.name}</label>
+            <span class="score-badge" id="score-${line.id}">5</span>
+          </div>
+          <input type="range" min="0" max="10" value="5"
+            class="w-full" style="accent-color:${line.color};"
+            oninput="updateScore('${line.id}', this.value)">
+          <div style="height:1px; background:linear-gradient(90deg, ${line.color}33, transparent); margin-top:6px;"></div>
+        `;
+        sliderContainer.appendChild(wrapper);
+      });
+    }
+
+    function renderTabs() {
+      lineTabsContainer.innerHTML = "";
+      transitData.lines.forEach(line => {
+        const btn = document.createElement("button");
+        btn.className = "tab-btn" + (appState.activeLineId === line.id ? " active" : "");
+        btn.innerText = line.name.replace(" Line","").replace("Sub-Line","Sub").replace("Signal Load Line","Signal Load");
+        btn.onclick = () => switchLine(line.id);
+        lineTabsContainer.appendChild(btn);
+      });
+    }
+
+    function renderActiveLine() {
+      const line = transitData.lines.find(l => l.id === appState.activeLineId);
+      activeLineTitle.innerText = line.name;
+      activeLineTitle.style.color = line.color;
+      activeLineDesc.innerText = line.desc;
+
+      stationList.innerHTML = "";
+      line.stations.forEach(station => {
+        let shapeHTML, typeColor, typeBg;
+        switch(station.type) {
+          case "escalation":
+            shapeHTML = `<div class="shape-triangle" style="color:${line.color}"></div>`;
+            typeColor = line.color;
+            typeBg = line.color + "15";
+            break;
+          case "stabilisation":
+            shapeHTML = `<div class="shape-circle" style="background:${line.color}; width:10px; height:10px; box-shadow:0 0 6px ${line.color}88;"></div>`;
+            typeColor = "#4ECFD4";
+            typeBg = "rgba(78,207,212,0.08)";
+            break;
+          case "identity-pivot":
+            shapeHTML = `<div class="shape-diamond" style="color:var(--gold); background:var(--gold);"></div>`;
+            typeColor = "#D7B56D";
+            typeBg = "rgba(215,181,109,0.08)";
+            break;
+          case "high-load":
+            shapeHTML = `<div class="shape-hexagon" style="color:${line.color}; background:${line.color};"></div>`;
+            typeColor = "#ff6b6b";
+            typeBg = "rgba(255,107,107,0.08)";
+            break;
+          default:
+            shapeHTML = `<div class="shape-circle" style="background:${line.color};"></div>`;
+            typeColor = line.color;
+            typeBg = line.color + "15";
+        }
+
+        const item = document.createElement("div");
+        item.className = "station-item";
+        item.style.setProperty('--line-color', line.color);
+        item.style.cssText += `border-left-color:${line.color}40;`;
+        item.querySelector && (item.style.borderLeft = `2px solid ${line.color}40`);
+        item.innerHTML = `
+          <div class="station-icon">${shapeHTML}</div>
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;">
+              <h4 style="font-family:'Playfair Display',serif; font-weight:600; font-size:1rem; color:var(--text-primary);">${station.name}</h4>
+              <span class="station-type-badge" style="color:${typeColor}; background:${typeBg}; border:1px solid ${typeColor}30;">
+                ${station.type.replace("-"," ")}
+              </span>
+            </div>
+            <p style="font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--text-secondary); margin-top:3px; line-height:1.5;">${station.desc}</p>
+          </div>
+        `;
+        item.style.borderLeft = `2px solid ${line.color}40`;
+        stationList.appendChild(item);
+      });
+    }
+
+    let radarChartInstance;
+
+    function initChart() {
+      const ctx = radarCanvas.getContext("2d");
+      radarChartInstance = new Chart(ctx, {
+        type: "radar",
+        data: {
+          labels: transitData.lines.map(l => l.name.replace(" Line","").replace(" Sub-Line","").replace("Signal Load Line","Signal")),
+          datasets: [{
+            label: "Current Load",
+            data: Object.values(appState.scores),
+            backgroundColor: "rgba(78,207,212,0.08)",
+            borderColor: "#4ECFD4",
+            pointBackgroundColor: "#D7B56D",
+            pointBorderColor: "#080a0e",
+            pointBorderWidth: 1,
+            pointHoverBackgroundColor: "#4ECFD4",
+            borderWidth: 1.5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: { color: "rgba(78,207,212,0.08)" },
+              grid: { color: "rgba(78,207,212,0.06)" },
+              pointLabels: {
+                font: { size: 9, family: "JetBrains Mono" },
+                color: "#5C6875"
+              },
+              suggestedMin: 0,
+              suggestedMax: 10,
+              ticks: { display: false, backdropColor: "transparent" },
+              backgroundColor: "transparent"
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "#0f1218",
+              titleColor: "#D7B56D",
+              bodyColor: "#9BA8B5",
+              borderColor: "rgba(78,207,212,0.2)",
+              borderWidth: 1,
+              padding: 10,
+              cornerRadius: 0
+            }
+          }
+        }
+      });
+    }
+
+    window.updateScore = function(lineId, value) {
+      appState.scores[lineId] = parseInt(value, 10);
+      const el = document.getElementById("score-" + lineId);
+      if (el) el.innerText = value;
+      radarChartInstance.data.datasets[0].data = Object.values(appState.scores);
+      radarChartInstance.update();
+      updateInsight();
+      updateRecoveryProtocol();
+    };
+
+    window.switchLine = function(lineId) {
+      appState.activeLineId = lineId;
+      renderTabs();
+      renderActiveLine();
+    };
+
+    function updateInsight() {
+      const scores = Object.entries(appState.scores);
+      const highest = scores.reduce((a, b) => a[1] > b[1] ? a : b);
+      const line = transitData.lines.find(l => l.id === highest[0]);
+      if (highest[1] < 4) {
+        chartInsight.innerText = "System loads nominal · Maintenance mode active";
+      } else if (highest[1] > 7) {
+        chartInsight.innerHTML = `CRITICAL LOAD · <span style="color:var(--gold)">${line.name}</span> · Begin stabilisation immediately`;
+      } else {
+        chartInsight.innerHTML = `Moderate load · <span style="color:var(--gold)">${line.name}</span> · Monitor and support regularly`;
+      }
+    }
+
+    function updateRecoveryProtocol() {
+      recoveryList.innerHTML = "";
+      const criticalLines = Object.entries(appState.scores)
+        .filter(([, s]) => s >= 6).map(([id]) => id);
+
+      let actions = [];
+      const recovLine = transitData.lines.find(l => l.id === "recovery");
+      if (recovLine) actions.push(...recovLine.stations.slice(0, 3));
+
+      if (criticalLines.includes("trigger") || criticalLines.includes("dopamine")) {
+        actions.push({ name: "Force Break", desc: "Step away from input. Five minutes of stillness, darkness or quiet.", type: "stabilisation" });
+      }
+      if (criticalLines.includes("biological") || criticalLines.includes("trauma")) {
+        actions.push({ name: "Vagus Reset", desc: "Cold water, humming, longer exhales or gentle movement.", type: "stabilisation" });
+      }
+      if (criticalLines.includes("thoughts") || criticalLines.includes("mirror")) {
+        actions.push({ name: "Brain Dump", desc: "Write out everything in your head so it stops looping.", type: "stabilisation" });
+      }
+
+      const unique = Array.from(new Map(actions.map(a => [a.name, a])).values());
+
+      if (unique.length === 0) {
+        recoveryList.innerHTML = `<p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.9rem; color:var(--text-dim);">No critical loads detected. Maintain baseline care.</p>`;
+        return;
+      }
+
+      unique.forEach(action => {
+        const li = document.createElement("div");
+        li.className = "recovery-item";
+        li.innerHTML = `
+          <div style="color:var(--gold); margin-top:2px; flex-shrink:0;">
+            <div class="shape-diamond" style="background:var(--gold); width:8px; height:8px;"></div>
+          </div>
+          <div>
+            <span style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:600; color:var(--text-primary); display:block;">${action.name}</span>
+            <span style="font-family:'Cormorant Garamond',serif; font-size:0.95rem; color:var(--text-secondary); display:block; margin-top:2px;">${action.desc}</span>
+          </div>
+        `;
+        recoveryList.appendChild(li);
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
