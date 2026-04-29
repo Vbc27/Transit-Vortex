@@ -695,8 +695,11 @@
     /* ---------- CONFIG ---------- */
     const STORAGE_KEY = "atelier_vortex_seal_v3";
     const RETURN_WINDOW_HOURS = 24;
-    const HANDOFF_URL = "https://www.theatelierhaus.com/product-page/burnout-to-breakthrough-the-atelier-haus-workbook";
-    const HANDOFF_LABEL = "Burnout to Breakthrough →";
+    // The Seal hands off to the threshold (a quiet interstitial), which then offers the workbook.
+    // To skip the threshold and link straight to the workbook, change HANDOFF_URL to:
+    //   https://www.theatelierhaus.com/product-page/burnout-to-breakthrough-the-atelier-haus-workbook
+    const HANDOFF_URL = "https://www.theatelierhaus.com/threshold";
+    const HANDOFF_LABEL = "The Threshold →";
 
     /* Stage flow:
        threshold -> trigger -> body -> thoughts -> regulation -> repair -> boundary -> interrupt -> seal
@@ -1010,7 +1013,7 @@
             <div class="ticket-footer">${date}</div>
           </div>
           <div class="vortex-cta-row">
-            <a class="vortex-cta active" href="${HANDOFF_URL}" target="_top" rel="noopener noreferrer">${HANDOFF_LABEL}</a>
+            <a class="vortex-cta active" href="${HANDOFF_URL}" data-action="handoff">${HANDOFF_LABEL}</a>
             <button type="button" class="vortex-link-soft" data-action="reset">Re-enter the Vortex</button>
           </div>
         </section>`;
@@ -1045,7 +1048,22 @@
         case "mark-complete":     markComplete(); break;
         case "dismiss-banner":    dismissBanner(); break;
         case "toggle-chip":       toggleChip(el.dataset.value, el); break;
+        case "handoff":           navigateOut(el.getAttribute("href")); break;
       }
+    }
+
+    /* Iframe-safe navigation. Tries to navigate the parent window; if the iframe
+       sandbox blocks parent access, falls back to opening in a new tab. */
+    function navigateOut(url) {
+      if (!url) return;
+      try {
+        if (window.top && window.top !== window.self) {
+          window.top.location.href = url;
+          return;
+        }
+      } catch (e) { /* sandbox blocked top — fall through */ }
+      try { window.location.href = url; return; } catch (e) {}
+      window.open(url, "_blank", "noopener,noreferrer");
     }
 
     function toggleChip(value, chipEl) {
