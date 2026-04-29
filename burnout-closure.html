@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="The Burnout Vortex — a six-station diagnostic protocol. Trigger to Response, Response to Repair, Repair to Boundary. © VB.Clarke / The Atelier Haus.">
-  <title>The Burnout Vortex · The Atelier Haus(R)</title>
+  <meta name="description" content="The Burnout Vortex — a six-station diagnostic protocol with an interrupt and seal. Trigger to Response, Response to Repair, Repair to Boundary. © VB.Clarke / The Atelier Haus®.">
+  <title>The Burnout Vortex · The Atelier Haus®</title>
 
   <!--
     ============================================================
-    THE BURNOUT VORTEX — v2 (HTML build)
-    The Transit Map Protocol
-    Trigger · Body · Thoughts · Regulation · Repair · Boundary · Seal
+    THE BURNOUT VORTEX — v3 (HTML build)
+    Threshold · Diagnostic (I–VI) · Interrupt · Seal
     ============================================================
-    © VB.Clarke™ · The Atelier Haus(R)
+    © VB.Clarke™ · The Atelier Haus®
     The Burnout Vortex Mirror™ · The Burnout Transit Map™
     All route schema & pattern logic asserted as © VB.Clarke™
     ============================================================
@@ -342,6 +341,86 @@
     }
     .threshold-cta-wrap { display: flex; justify-content: center; }
 
+    /* INTERRUPT */
+    .interrupt-mark { display: flex; justify-content: center; margin: 8px 0 36px; }
+    .interrupt-pulse {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 0 var(--gold-glow), 0 0 24px var(--gold-glow);
+      animation: interruptPulse 2.4s ease-in-out infinite;
+    }
+    @keyframes interruptPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 var(--gold-glow), 0 0 24px var(--gold-glow); }
+      50%      { transform: scale(1.3); box-shadow: 0 0 0 6px transparent, 0 0 36px var(--gold-glow); }
+    }
+    .interrupt-prelude {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(18px, 2.8vw, 22px);
+      color: var(--bone-soft);
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto 48px;
+      line-height: 1.5;
+    }
+    .interrupt-card {
+      border: 1px solid var(--gold);
+      background: linear-gradient(180deg, rgba(201,169,97,0.06) 0%, rgba(201,169,97,0.02) 100%);
+      padding: 36px 32px;
+      margin: 0 0 32px;
+      position: relative;
+    }
+    .interrupt-card::before, .interrupt-card::after {
+      content: '';
+      position: absolute;
+      width: 12px; height: 12px;
+      border: 1px solid var(--gold);
+    }
+    .interrupt-card::before {
+      top: -1px; left: -1px;
+      border-right: none; border-bottom: none;
+    }
+    .interrupt-card::after {
+      bottom: -1px; right: -1px;
+      border-left: none; border-top: none;
+    }
+    .interrupt-card-meta {
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .interrupt-action {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: clamp(22px, 4vw, 30px);
+      color: var(--bone);
+      text-align: center;
+      line-height: 1.3;
+      margin: 0 0 18px;
+      letter-spacing: -0.005em;
+    }
+    .interrupt-instruction {
+      font-style: italic;
+      font-size: clamp(14px, 2vw, 16px);
+      color: var(--gold-dim);
+      text-align: center;
+      letter-spacing: 0.04em;
+      margin: 0;
+    }
+    .interrupt-footnote {
+      font-style: italic;
+      font-size: clamp(13px, 1.9vw, 15px);
+      color: var(--bone-muted);
+      text-align: center;
+      margin: 0 auto 40px;
+      max-width: 440px;
+      line-height: 1.55;
+    }
+
     /* SEAL */
     .seal-mark { display: flex; justify-content: center; margin: 16px 0 36px; }
     .seal-circle {
@@ -538,7 +617,8 @@
     /* ACCESSIBILITY */
     @media (prefers-reduced-motion: reduce) {
       .stage-fade, .vortex-chip, .seal-circle, .seal-inner,
-      .threshold-line, .ticket-row, .progress-station, .vortex-banner {
+      .threshold-line, .interrupt-pulse, .ticket-row,
+      .progress-station, .vortex-banner {
         animation: none !important;
       }
       .vortex-chip, .vortex-cta, .station-dot { transition: none !important; }
@@ -569,13 +649,13 @@
     <div id="vortex-content"></div>
 
     <footer class="vortex-footer">
-      The Burnout Transit Map™ · The Burnout Vortex Mirror™ · © VB.Clarke
+      The Atelier Haus® · The Burnout Transit Map™ · The Burnout Vortex Mirror™ · © VB.Clarke
     </footer>
   </div>
 
   <script>
     /* ============================================================
-       © VB.Clarke™ · The Atelier Hau(R)
+       © VB.Clarke™ · The Atelier Haus®
        The Burnout Vortex Mirror™ · The Burnout Transit Map™
        All route schema & pattern logic asserted as © VB.Clarke™
        ============================================================ */
@@ -609,23 +689,26 @@
       "Office Hours Only","Meeting Cap","Deep Work · DND","Phone Off · Focus",
       "Auto-Reply Emails","No Weekend Work","Hard Lunch","AM Focus Block",
       "Meeting-free Wed","End Work On Time","Family Time Block","Gym · Non-Negotiable",
-      "Digital Sunset","Social Media Cap","\u201CNot Available\u201D Template"
+      "Digital Sunset","Social Media Cap","Not Available Template"
     ];
 
     /* ---------- CONFIG ---------- */
-    const STORAGE_KEY = "atelier_vortex_seal_v2";
+    const STORAGE_KEY = "atelier_vortex_seal_v3";
     const RETURN_WINDOW_HOURS = 24;
     const HANDOFF_URL = "https://theburnoutsignal.substack.com";
 
-    const ORDER = ["threshold","trigger","body","thoughts","regulation","repair","boundary","interrupt","seal"];
+    /* Stage flow:
+       threshold -> trigger -> body -> thoughts -> regulation -> repair -> boundary -> interrupt -> seal
+       Progress bar shows ONLY during trigger..boundary (the diagnostic).
+       Interrupt is a threshold between diagnostic and seal — not a numbered station. */
 
     const STAGE_META = {
-      trigger:    { numeral: "I",   name: "Trigger",     intro: "What activated the loop. Notice as many as are true.", mode: "multi",  options: TRIGGERS },
-      body:       { numeral: "II",  name: "Body Hints",  intro: "What your body did before your mind named it.",         mode: "multi",  options: BODY_HINTS },
-      thoughts:   { numeral: "III", name: "Thoughts",    intro: "Clock the story your mind ran.",                        mode: "multi",  options: THOUGHTS },
-      regulation: { numeral: "IV",  name: "Regulation",  intro: "Regulation comes first. Choose one move — before any fix.", mode: "single", options: REGULATION },
-      repair:     { numeral: "V",   name: "Repair",      intro: "Now choose one repair. Doable today.",                  mode: "single", options: REPAIR },
-      boundary:   { numeral: "VI",  name: "Boundary",    intro: "Close the sequence. The clean line you'll use next time.", mode: "single", options: BOUNDARIES }
+      trigger:    { numeral: "I",   name: "Trigger",     intro: "What activated the loop. Notice as many as are true.",                  mode: "multi",  options: TRIGGERS },
+      body:       { numeral: "II",  name: "Body Hints",  intro: "What your body did before your mind named it.",                          mode: "multi",  options: BODY_HINTS },
+      thoughts:   { numeral: "III", name: "Thoughts",    intro: "Clock the story your mind ran.",                                         mode: "multi",  options: THOUGHTS },
+      regulation: { numeral: "IV",  name: "Regulation",  intro: "Regulation comes first. Choose one move — before any fix.",              mode: "single", options: REGULATION },
+      repair:     { numeral: "V",   name: "Repair",      intro: "Now choose one repair. Doable today.",                                   mode: "single", options: REPAIR },
+      boundary:   { numeral: "VI",  name: "Boundary",    intro: "Close the sequence. The clean line you'll use next time.",               mode: "single", options: BOUNDARIES }
     };
 
     /* ---------- STATE ---------- */
@@ -660,42 +743,43 @@
 
     function canAdvance() {
       switch (state.stage) {
-        case "threshold": return true;
-        case "trigger":   return state.triggers.length > 0;
-        case "body":      return state.body.length > 0;
-        case "thoughts":  return state.thoughts.length > 0;
-        case "regulation":return !!state.regulation;
-        case "repair":    return !!state.repair;
-        case "boundary":  return !!state.boundary;
+        case "threshold":  return true;
+        case "trigger":    return state.triggers.length > 0;
+        case "body":       return state.body.length > 0;
+        case "thoughts":   return state.thoughts.length > 0;
+        case "regulation": return !!state.regulation;
+        case "repair":     return !!state.repair;
+        case "boundary":   return !!state.boundary;
+        case "interrupt":  return true;
         default: return true;
       }
     }
 
+    /* Linear stage flow */
+    const STAGE_FLOW = ["threshold","trigger","body","thoughts","regulation","repair","boundary","interrupt","seal"];
+
     function goNext() {
-      const idx = ORDER.indexOf(state.stage);
-      if (state.stage === "boundary") {
-  state.stage = "interrupt";
-  render();
-  return;
-} 
-      if (state.stage === "interrupt") {
-  render();
-  return;
-}
-  else if (idx < ORDER.length - 1) {
-        state.stage = ORDER[idx + 1];
-        render();
+      const idx = STAGE_FLOW.indexOf(state.stage);
+      if (idx < 0 || idx >= STAGE_FLOW.length - 1) return;
+      const nextStage = STAGE_FLOW[idx + 1];
+      // Crossing into "seal" from "interrupt" persists the commitment
+      if (nextStage === "seal") {
+        persistSeal();
       }
+      state.stage = nextStage;
+      render();
     }
+
     function goBack() {
-      const idx = ORDER.indexOf(state.stage);
-      if (idx > 0) { state.stage = ORDER[idx - 1]; render(); }
+      const idx = STAGE_FLOW.indexOf(state.stage);
+      if (idx > 0) { state.stage = STAGE_FLOW[idx - 1]; render(); }
     }
-    function sealCommitment() {
+
+    function persistSeal() {
       const seal = {
-        triggers: state.triggers,
-        body: state.body,
-        thoughts: state.thoughts,
+        triggers: state.triggers.slice(),
+        body: state.body.slice(),
+        thoughts: state.thoughts.slice(),
         regulation: state.regulation,
         repair: state.repair,
         boundary: state.boundary,
@@ -703,9 +787,8 @@
         completed: false
       };
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(seal)); } catch {}
-      state.stage = "seal";
-      render();
     }
+
     function markComplete() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -719,7 +802,9 @@
       state.openSeal = null;
       render();
     }
+
     function dismissBanner() { state.openSeal = null; render(); }
+
     function resetAll() {
       try { localStorage.removeItem(STORAGE_KEY); } catch {}
       Object.assign(state, {
@@ -733,8 +818,9 @@
     function render() {
       let html = "";
 
-      // Progress line on selection stages
-      if (!["threshold","seal"].includes(state.stage)) {
+      // Progress line shows only during the six diagnostic stations
+      const diagStages = ["trigger","body","thoughts","regulation","repair","boundary"];
+      if (diagStages.includes(state.stage)) {
         html += renderProgress();
       }
 
@@ -743,9 +829,12 @@
         html += renderBanner(state.openSeal);
       }
 
-      if (state.stage === "threshold") html += renderThreshold();
-      else if (state.stage === "seal") html += renderSeal();
-      else html += renderSelection(state.stage);
+      switch (state.stage) {
+        case "threshold": html += renderThreshold(); break;
+        case "interrupt": html += renderInterrupt(); break;
+        case "seal":      html += renderSeal();      break;
+        default:          html += renderSelection(state.stage);
+      }
 
       root.innerHTML = html;
       attachListeners();
@@ -800,68 +889,9 @@
         </section>`;
     }
 
-  function getInterruptionAction() {
-  if (state.boundary) {
-    return {
-      label: "Boundary",
-      text: state.boundary,
-      instruction: "Execute this boundary within 24 hours."
-    };
-  }
-
-  if (state.repair) {
-    return {
-      label: "Repair",
-      text: state.repair,
-      instruction: "Complete this repair action today."
-    };
-  }
-
-  return {
-    label: "Regulation",
-    text: state.regulation,
-    instruction: "Do this now before continuing."
-  };
-}
-
-function renderInterruption() {
-  const action = getInterruptionAction();
-
-  return `
-    <section class="vortex-stage stage-fade">
-      <div class="stage-numeral">VII</div>
-      <h2 class="stage-name">Interrupt</h2>
-
-      <p class="stage-intro">
-        This is where most people pause.  
-        That pause is the pattern.
-      </p>
-
-      <div class="vortex-banner">
-        <div class="vortex-banner-meta">Required Action</div>
-
-        <div class="vortex-banner-action">
-          <strong>${action.label}</strong> ${escapeHTML(action.text)}
-        </div>
-
-        <p style="margin-top:10px;">
-          ${action.instruction}
-        </p>
-
-        <p style="margin-top:10px; font-style:italic;">
-          This will feel slightly uncomfortable. That’s how you know it’s working.
-        </p>
-      </div>
-
-      <div class="vortex-cta-row">
-        <button class="vortex-cta active" data-action="confirm-interrupt">
-          I will do this within 24 hours
-        </button>
-      </div>
-    </section>
-  `;
-}    function renderSelection(stageKey) {
+    function renderSelection(stageKey) {
       const meta = STAGE_META[stageKey];
+      if (!meta) return "";
       const isMulti = meta.mode === "multi";
       const value = state[stageKey === "trigger" ? "triggers" : stageKey];
       const count = isMulti ? value.length : (value ? 1 : 0);
@@ -873,6 +903,7 @@ function renderInterruption() {
         const delay = Math.min(i * 40, 480);
         chipsHTML += `
           <button class="vortex-chip ${selected ? "selected" : ""}"
+                  type="button"
                   data-action="toggle-chip" data-value="${escapeHTML(opt)}"
                   aria-pressed="${selected}"
                   style="animation-delay: ${delay}ms;">
@@ -882,8 +913,9 @@ function renderInterruption() {
       });
 
       const valid = canAdvance();
-      const ctaLabel = isFinal ? "Seal the Sequence →" : "Continue →";
-
+      const ctaLabel = isFinal ? "Continue to the Interrupt →" : "Continue →";
+      // Use class only — never the native `disabled` attribute, which can swallow
+      // click events even after attribute removal in some browser/iframe combos.
       return `
         <section class="vortex-stage stage-fade" aria-labelledby="${stageKey}-heading">
           <div class="stage-numeral">${meta.numeral}</div>
@@ -896,23 +928,62 @@ function renderInterruption() {
           }</div>
           <div class="vortex-chips">${chipsHTML}</div>
           <div class="vortex-cta-row">
-            <button class="vortex-cta ${valid ? "active" : "is-disabled"}"
-                    data-action="continue" ${valid ? "" : "disabled aria-disabled='true'"}>
+            <button type="button"
+                    class="vortex-cta ${valid ? "active" : "is-disabled"}"
+                    data-action="continue"
+                    aria-disabled="${!valid}">
               ${ctaLabel}
             </button>
-            <button class="vortex-link-soft" data-action="back">← Back</button>
+            <button type="button" class="vortex-link-soft" data-action="back">← Back</button>
+          </div>
+        </section>`;
+    }
+
+    function renderInterrupt() {
+      // Primary commitment is the boundary (most visible action), then repair, then regulation.
+      // All three are part of the sequence — but the interrupt highlights the most actionable one.
+      let label = "Boundary", action = state.boundary, instruction = "Hold this line for the next 24 hours.";
+      if (!action) { label = "Repair"; action = state.repair; instruction = "Complete this repair today."; }
+      if (!action) { label = "Regulation"; action = state.regulation; instruction = "Do this now, before anything else."; }
+
+      return `
+        <section class="vortex-stage stage-fade" aria-labelledby="interrupt-heading">
+          <div class="interrupt-mark" aria-hidden="true"><div class="interrupt-pulse"></div></div>
+
+          <h2 class="stage-name" id="interrupt-heading">The Interrupt</h2>
+
+          <p class="interrupt-prelude">
+            This is where most people pause.<br>
+            That pause is the pattern.
+          </p>
+
+          <div class="interrupt-card">
+            <div class="interrupt-card-meta">${escapeHTML(label)} · Required</div>
+            <div class="interrupt-action">${escapeHTML(action)}</div>
+            <p class="interrupt-instruction">${escapeHTML(instruction)}</p>
+          </div>
+
+          <p class="interrupt-footnote">
+            This will feel slightly uncomfortable. That's how you know it's working.
+          </p>
+
+          <div class="vortex-cta-row">
+            <button type="button" class="vortex-cta active" data-action="continue">
+              I will do this within 24 hours →
+            </button>
+            <button type="button" class="vortex-link-soft" data-action="back">← Back</button>
           </div>
         </section>`;
     }
 
     function renderSeal() {
       const lines = [
-        { label: "Trigger",   value: state.triggers.join(" · ") },
-        { label: "Body",      value: state.body.join(" · ") },
-        { label: "Thoughts",  value: state.thoughts.join(" · ") },
-        { label: "Regulation",value: state.regulation },
-        { label: "Repair",    value: state.repair },
-        { label: "Boundary",  value: state.boundary }
+        { label: "Trigger",    value: state.triggers.join(" · ") },
+        { label: "Body",       value: state.body.join(" · ") },
+        { label: "Thoughts",   value: state.thoughts.join(" · ") },
+        { label: "Regulation", value: state.regulation },
+        { label: "Repair",     value: state.repair },
+        { label: "Boundary",   value: state.boundary }
       ];
       let rowsHTML = "";
       lines.forEach((line, i) => {
@@ -939,29 +1010,40 @@ function renderInterruption() {
           </div>
           <div class="vortex-cta-row">
             <a class="vortex-cta active" href="${HANDOFF_URL}" target="_top" rel="noopener noreferrer">The Burnout Signal →</a>
-            <button class="vortex-link-soft" data-action="reset">Re-enter the Vortex</button>
+            <button type="button" class="vortex-link-soft" data-action="reset">Re-enter the Vortex</button>
           </div>
         </section>`;
     }
 
-    /* ---------- EVENT BINDING ---------- */
+    /* ---------- EVENT BINDING (event delegation, single listener) ---------- */
     function attachListeners() {
-      document.querySelectorAll("[data-action]").forEach(el => {
-        el.addEventListener("click", handleAction);
-      });
+      // Single delegated listener on the container — survives re-renders cleanly.
+      // Re-bind defensively in case innerHTML replacement removed a previous binding context.
+      root.removeEventListener("click", onRootClick);
+      root.addEventListener("click", onRootClick);
     }
 
-    function handleAction(e) {
-      const action = e.currentTarget.dataset.action;
+    function onRootClick(e) {
+      const target = e.target.closest("[data-action]");
+      if (!target) return;
+      // If the CTA is in the disabled visual state, ignore the click.
+      if (target.classList.contains("is-disabled") || target.getAttribute("aria-disabled") === "true") {
+        // For the chip case we still want to allow toggling; chips never have is-disabled.
+        if (target.dataset.action !== "toggle-chip") return;
+      }
+      handleAction(target);
+    }
+
+    function handleAction(el) {
+      const action = el.dataset.action;
       switch (action) {
-        case "begin": goNext(); break;
-        case "continue": if (canAdvance()) goNext(); break;
-        case "back": goBack(); break;
-        case "reset": resetAll(); break;
-        case "mark-complete": markComplete(); break;
-        case "dismiss-banner": dismissBanner(); break;
-        case "toggle-chip": toggleChip(e.currentTarget.dataset.value, e.currentTarget); break;
-        case "confirm-interrupt": sealCommitment(); break;
+        case "begin":             goNext(); break;
+        case "continue":          if (canAdvance()) goNext(); break;
+        case "back":              goBack(); break;
+        case "reset":             resetAll(); break;
+        case "mark-complete":     markComplete(); break;
+        case "dismiss-banner":    dismissBanner(); break;
+        case "toggle-chip":       toggleChip(el.dataset.value, el); break;
       }
     }
 
@@ -982,8 +1064,9 @@ function renderInterruption() {
         const current = state[stageKey];
         const newValue = current === value ? "" : value;
         state[stageKey] = newValue;
-        // Clear all chip selections, then mark the right one
-        document.querySelectorAll(".vortex-chip").forEach(c => updateChipUI(c, c.dataset.value === newValue));
+        document.querySelectorAll(".vortex-chip").forEach(c =>
+          updateChipUI(c, c.dataset.value === newValue && newValue !== "")
+        );
       }
       updateContinueButton();
     }
@@ -1008,13 +1091,7 @@ function renderInterruption() {
       const valid = canAdvance();
       btn.classList.toggle("active", valid);
       btn.classList.toggle("is-disabled", !valid);
-      if (valid) {
-        btn.removeAttribute("disabled");
-        btn.removeAttribute("aria-disabled");
-      } else {
-        btn.setAttribute("disabled", "");
-        btn.setAttribute("aria-disabled", "true");
-      }
+      btn.setAttribute("aria-disabled", String(!valid));
     }
 
     /* ---------- INIT ---------- */
