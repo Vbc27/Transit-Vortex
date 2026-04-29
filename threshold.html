@@ -264,14 +264,12 @@
     <div class="threshold-cta-wrap">
       <a class="threshold-cta"
          href="https://www.theatelierhaus.com/product-page/burnout-to-breakthrough-the-atelier-haus-workbook"
-         target="_top"
-         rel="noopener noreferrer">
+         data-nav="parent">
         Burnout to Breakthrough →
       </a>
       <a class="threshold-link-soft"
          href="https://www.theatelierhaus.com/"
-         target="_top"
-         rel="noopener noreferrer">
+         data-nav="parent">
         Return home
       </a>
     </div>
@@ -280,5 +278,36 @@
       The Atelier Haus® · The Burnout Transit Map™ · © VB.Clarke
     </footer>
   </div>
+
+  <script>
+    /* Iframe-safe navigation.
+       Tries to navigate the parent window first (cleanest UX — replaces the iframe).
+       If the iframe sandbox blocks parent access, falls back to opening in a new tab.
+       Always works regardless of how the page is embedded. */
+    (function() {
+      function navigate(url) {
+        if (!url) return;
+        try {
+          if (window.top && window.top !== window.self) {
+            window.top.location.href = url;
+            return;
+          }
+        } catch (e) {
+          /* Sandbox blocked top access — fall through to new tab */
+        }
+        try {
+          window.location.href = url;
+          return;
+        } catch (e) { /* fall through */ }
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+      document.addEventListener('click', function(e) {
+        var a = e.target.closest('a[data-nav="parent"]');
+        if (!a) return;
+        e.preventDefault();
+        navigate(a.getAttribute('href'));
+      });
+    })();
+  </script>
 </body>
 </html>
