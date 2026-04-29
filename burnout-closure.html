@@ -575,7 +575,7 @@
 
   <script>
     /* ============================================================
-       © VB.Clarke™ · The Atelier Haus™
+       © VB.Clarke™ · The Atelier Hau(R)
        The Burnout Vortex Mirror™ · The Burnout Transit Map™
        All route schema & pattern logic asserted as © VB.Clarke™
        ============================================================ */
@@ -617,7 +617,7 @@
     const RETURN_WINDOW_HOURS = 24;
     const HANDOFF_URL = "https://theburnoutsignal.substack.com";
 
-    const ORDER = ["threshold","trigger","body","thoughts","regulation","repair","boundary","seal"];
+    const ORDER = ["threshold","trigger","body","thoughts","regulation","repair","boundary","interrupt","seal"];
 
     const STAGE_META = {
       trigger:    { numeral: "I",   name: "Trigger",     intro: "What activated the loop. Notice as many as are true.", mode: "multi",  options: TRIGGERS },
@@ -674,8 +674,10 @@
     function goNext() {
       const idx = ORDER.indexOf(state.stage);
       if (state.stage === "boundary") {
-        sealCommitment();
-      } else if (idx < ORDER.length - 1) {
+  state.stage = "interrupt";
+  render();
+  return;
+} else if (idx < ORDER.length - 1) {
         state.stage = ORDER[idx + 1];
         render();
       }
@@ -793,7 +795,67 @@
         </section>`;
     }
 
-    function renderSelection(stageKey) {
+  function getInterruptionAction() {
+  if (state.boundary) {
+    return {
+      label: "Boundary",
+      text: state.boundary,
+      instruction: "Execute this boundary within 24 hours."
+    };
+  }
+
+  if (state.repair) {
+    return {
+      label: "Repair",
+      text: state.repair,
+      instruction: "Complete this repair action today."
+    };
+  }
+
+  return {
+    label: "Regulation",
+    text: state.regulation,
+    instruction: "Do this now before continuing."
+  };
+}
+
+function renderInterruption() {
+  const action = getInterruptionAction();
+
+  return `
+    <section class="vortex-stage stage-fade">
+      <div class="stage-numeral">VII</div>
+      <h2 class="stage-name">Interrupt</h2>
+
+      <p class="stage-intro">
+        This is where most people pause.  
+        That pause is the pattern.
+      </p>
+
+      <div class="vortex-banner">
+        <div class="vortex-banner-meta">Required Action</div>
+
+        <div class="vortex-banner-action">
+          <strong>${action.label}</strong> ${escapeHTML(action.text)}
+        </div>
+
+        <p style="margin-top:10px;">
+          ${action.instruction}
+        </p>
+
+        <p style="margin-top:10px; font-style:italic;">
+          This will feel slightly uncomfortable. That’s how you know it’s working.
+        </p>
+      </div>
+
+      <div class="vortex-cta-row">
+        <button class="vortex-cta active" data-action="confirm-interrupt">
+          I will do this within 24 hours
+        </button>
+      </div>
+    </section>
+  `;
+}    function renderSelection(stageKey) {
       const meta = STAGE_META[stageKey];
       const isMulti = meta.mode === "multi";
       const value = state[stageKey === "trigger" ? "triggers" : stageKey];
@@ -894,6 +956,7 @@
         case "mark-complete": markComplete(); break;
         case "dismiss-banner": dismissBanner(); break;
         case "toggle-chip": toggleChip(e.currentTarget.dataset.value, e.currentTarget); break;
+        case "confirm-interrupt": sealCommitment(); break;
       }
     }
 
