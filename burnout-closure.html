@@ -695,7 +695,8 @@
     /* ---------- CONFIG ---------- */
     const STORAGE_KEY = "atelier_vortex_seal_v3";
     const RETURN_WINDOW_HOURS = 24;
-    const HANDOFF_URL = "https://theburnoutsignal.substack.com";
+    const HANDOFF_URL = "https://www.theatelierhaus.com/product-page/burnout-to-breakthrough-the-atelier-haus-workbook";
+    const HANDOFF_LABEL = "Burnout to Breakthrough →";
 
     /* Stage flow:
        threshold -> trigger -> body -> thoughts -> regulation -> repair -> boundary -> interrupt -> seal
@@ -1009,7 +1010,7 @@
             <div class="ticket-footer">${date}</div>
           </div>
           <div class="vortex-cta-row">
-            <a class="vortex-cta active" href="${HANDOFF_URL}" target="_top" rel="noopener noreferrer">The Burnout Signal →</a>
+            <a class="vortex-cta active" href="${HANDOFF_URL}" target="_top" rel="noopener noreferrer">${HANDOFF_LABEL}</a>
             <button type="button" class="vortex-link-soft" data-action="reset">Re-enter the Vortex</button>
           </div>
         </section>`;
