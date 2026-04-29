@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="The Burnout Vortex — a six-station diagnostic protocol. Trigger to Response, Response to Repair, Repair to Boundary. © VB.Clarke / The Atelier Haus.">
-  <title>The Burnout Vortex · The Atelier Haus</title>
+  <title>The Burnout Vortex · The Atelier Haus(R)</title>
 
   <!--
     ============================================================
@@ -12,7 +12,7 @@
     The Transit Map Protocol
     Trigger · Body · Thoughts · Regulation · Repair · Boundary · Seal
     ============================================================
-    © VB.Clarke™ · The Atelier Haus™
+    © VB.Clarke™ · The Atelier Haus(R)
     The Burnout Vortex Mirror™ · The Burnout Transit Map™
     All route schema & pattern logic asserted as © VB.Clarke™
     ============================================================
@@ -677,7 +677,12 @@
   state.stage = "interrupt";
   render();
   return;
-} else if (idx < ORDER.length - 1) {
+} 
+      if (state.stage === "interrupt") {
+  render();
+  return;
+}
+  else if (idx < ORDER.length - 1) {
         state.stage = ORDER[idx + 1];
         render();
       }
