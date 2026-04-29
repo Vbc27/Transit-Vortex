@@ -1,0 +1,96 @@
+PROPRIETARY LICENSE
+
+The Burnout Vortex / The Burnout Transit Map Mirror
+Copyright (C) 2026 VB Clarke. All rights reserved.
+
+
+1. OWNERSHIP
+
+   This software, including all source code, design assets, copy, route
+   schemas, taxonomies, pattern logic, and accompanying documentation
+   (collectively, the "Work"), is the intellectual property of VB Clarke,
+   trading as The Atelier Haus.
+
+   The Work is protected by copyright under the Copyright Act 1968 (Cth)
+   of Australia and equivalent international treaties to which Australia
+   is a signatory, including the Berne Convention.
+
+
+2. ALL RIGHTS RESERVED
+
+   No part of this Work may be reproduced, copied, modified, adapted,
+   merged, published, distributed, sublicensed, sold, publicly displayed,
+   transmitted, used to train any machine learning system, or otherwise
+   exploited in any form or by any means -- electronic, mechanical, or
+   otherwise -- without the prior, express, written permission of the
+   copyright holder.
+
+   This includes, without limitation:
+     - copying or adapting the source code in whole or in part;
+     - reproducing the visual design, typography system, motion language,
+       or stage architecture;
+     - reproducing or adapting the diagnostic protocol, route schemas,
+       chip taxonomies, or pattern logic encoded in the Work;
+     - using the Work or any part of it as training data for AI systems;
+     - rebranding, white-labelling, or relicensing the Work;
+     - any commercial use of any kind.
+
+   Viewing the source code on a public repository, if applicable, does
+   not constitute a licence to use it.
+
+
+3. TRADEMARKS
+
+   The following are trademarks of VB Clarke / The Atelier Haus and are
+   used throughout this Work:
+
+     The Atelier Haus
+     The Burnout Transit Map
+     The Burnout Vortex Mirror
+     The Mirror Check Protocol
+     The Prism Method
+     Algorithmic Burnout
+     Synthetic Empathy Distortion
+     Signal Rights Framework
+     Burnout Identity Decoder
+     Burnout Intensity Equation
+     Signal Scrolls
+     Schrodinger's Chat
+     The Burnout Signal
+
+   Trademark rights are asserted independently of, and in addition to,
+   the copyright in this Work. No right to use these marks is granted
+   by this licence.
+
+
+4. NO WARRANTY
+
+   The Work is provided "as is" without warranty of any kind, express
+   or implied. The copyright holder is not liable for any damages
+   arising from the use, inability to use, or any consequence of the
+   Work.
+
+
+5. LICENSING ENQUIRIES
+
+   For licensing, partnership, or use enquiries, contact:
+
+     theatelierhaus@gmail.com
+
+   No use is permitted absent a written licence agreement signed by the
+   copyright holder.
+
+
+6. GOVERNING LAW
+
+   This licence is governed by the laws of Australia. Any dispute
+   arising under or in connection with this licence shall be subject
+   to the exclusive jurisdiction of the courts of Australia.
+
+
+-------------------------------------------------------------------
+(C) VB Clarke 2026 -- The Atelier Haus(R)
+All route schema and pattern logic asserted as (C) VB.Clarke /
+The Atelier Haus(R). The Burnout Transit Map and The Burnout Vortex
+Mirror are trademarks of VB Clarke.
+-------------------------------------------------------------------
