@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Burnout Vortex — a six-station diagnostic protocol. Trigger to Response, Response to Repair, Repair to Boundary. © VB.Clarke / The Atelier Haus.">
+  <title>The Burnout Vortex · The Atelier Haus</title>
+
+  <!--
+    ============================================================
+    THE BURNOUT VORTEX — v2 (HTML build)
+    The Transit Map Protocol
+    Trigger · Body · Thoughts · Regulation · Repair · Boundary · Seal
+    ============================================================
+    © VB.Clarke™ · The Atelier Haus™
+    The Burnout Vortex Mirror™ · The Burnout Transit Map™
+    All route schema & pattern logic asserted as © VB.Clarke™
+    ============================================================
+  -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --obsidian: #0a0908;
+      --obsidian-2: #14110f;
+      --gold: #c9a961;
+      --gold-dim: #8a7444;
+      --gold-glow: rgba(201, 169, 97, 0.18);
+      --teal-deep: #16302f;
+      --bone: #f3ede1;
+      --bone-soft: rgba(243, 237, 225, 0.85);
+      --bone-muted: rgba(243, 237, 225, 0.62);
+      --hairline: rgba(201, 169, 97, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% 0%, var(--teal-deep) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 100%, rgba(201,169,97,0.06) 0%, transparent 50%),
+        var(--obsidian);
+      color: var(--bone);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 32px);
+      display: flex;
+      justify-content: center;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(201,169,97,0.04) 1px, transparent 0);
+      background-size: 24px 24px;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .vortex-frame {
+      width: 100%;
+      max-width: 720px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HEADER */
+    .vortex-header {
+      text-align: center;
+      padding: 32px 0 40px;
+      border-bottom: 1px solid var(--hairline);
+      margin-bottom: 40px;
+    }
+    .vortex-mark {
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 22px;
+    }
+    .vortex-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+      font-size: clamp(36px, 7vw, 56px);
+      letter-spacing: -0.01em;
+      color: var(--bone);
+      margin: 0 0 12px;
+      line-height: 1.05;
+    }
+    .vortex-subtitle {
+      font-style: italic;
+      font-size: clamp(13px, 2vw, 15px);
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* PROGRESS */
+    .vortex-progress {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 480px;
+      margin: 0 auto 56px;
+      padding: 0 12px;
+    }
+    .progress-track {
+      position: absolute;
+      top: 7px;
+      left: 12px; right: 12px;
+      height: 1px;
+      background: var(--hairline);
+      z-index: 0;
+    }
+    .progress-station {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      background: var(--obsidian);
+      padding: 0 6px;
+      transition: opacity 400ms ease;
+    }
+    .station-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      border: 1px solid var(--gold-dim);
+      background: var(--obsidian);
+      transition: all 500ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .station-numeral {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 11px;
+      color: var(--gold-dim);
+      letter-spacing: 0.06em;
+      transition: color 500ms ease;
+    }
+    .progress-station.passed .station-dot { background: var(--gold-dim); border-color: var(--gold-dim); }
+    .progress-station.passed .station-numeral { color: var(--gold-dim); }
+    .progress-station.current .station-dot {
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--obsidian), 0 0 0 4px var(--gold-glow), 0 0 16px var(--gold-glow);
+      transform: scale(1.2);
+    }
+    .progress-station.current .station-numeral { color: var(--gold); font-weight: 500; }
+    .progress-station.ahead .station-dot { opacity: 0.5; }
+    .progress-station.ahead .station-numeral { opacity: 0.5; }
+
+    /* STAGE BASE */
+    .vortex-stage { position: relative; padding: 8px 0 16px; }
+    .stage-fade { animation: stageFade 700ms cubic-bezier(0.22, 1, 0.36, 1); }
+    @keyframes stageFade {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .stage-numeral {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 14px;
+      letter-spacing: 0.32em;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .stage-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+      font-size: clamp(34px, 6vw, 48px);
+      color: var(--bone);
+      text-align: center;
+      margin: 0 0 18px;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+    }
+    .stage-intro {
+      font-style: italic;
+      font-size: clamp(16px, 2.4vw, 19px);
+      color: var(--bone-soft);
+      text-align: center;
+      margin: 0 auto 16px;
+      line-height: 1.5;
+      max-width: 480px;
+    }
+    .stage-mode-hint {
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    /* CHIPS */
+    .vortex-chips {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-bottom: 56px;
+    }
+    .vortex-chip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(243, 237, 225, 0.02);
+      border: 1px solid var(--hairline);
+      color: var(--bone-soft);
+      padding: 18px 20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 380ms cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.005em;
+      opacity: 0;
+      animation: chipFade 500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes chipFade {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .vortex-chip::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--gold);
+      transition: width 500ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .vortex-chip:hover {
+      border-color: var(--gold-dim);
+      background: rgba(201, 169, 97, 0.04);
+      color: var(--bone);
+    }
+    .vortex-chip:hover::before { width: 100%; }
+    .vortex-chip.selected {
+      border-color: var(--gold);
+      background: rgba(201, 169, 97, 0.08);
+      color: var(--bone);
+      box-shadow: 0 0 0 1px var(--gold-glow), 0 0 24px var(--gold-glow);
+    }
+    .vortex-chip.selected::before { width: 100%; }
+    .chip-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px; height: 18px;
+      border: 1px solid var(--gold-dim);
+      border-radius: 50%;
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      line-height: 1;
+      color: var(--gold);
+      flex-shrink: 0;
+      transition: all 380ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .vortex-chip.selected .chip-mark {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--obsidian);
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+    .chip-label { flex: 1; }
+
+    /* CTA */
+    .vortex-cta {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 16px 36px;
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 400ms cubic-bezier(0.22, 1, 0.36, 1);
+      text-decoration: none;
+      text-align: center;
+    }
+    .vortex-cta.active:hover {
+      background: var(--gold);
+      color: var(--obsidian);
+      letter-spacing: 0.08em;
+    }
+    .vortex-cta.is-disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .vortex-cta-row {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    /* THRESHOLD */
+    .threshold-mark { display: flex; justify-content: center; margin: 8px 0 36px; }
+    .threshold-line {
+      width: 1px;
+      height: 56px;
+      background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+      animation: thresholdPulse 4s ease-in-out infinite;
+    }
+    @keyframes thresholdPulse {
+      0%, 100% { opacity: 0.4; }
+      50%      { opacity: 1; }
+    }
+    .threshold-headline {
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+      font-size: clamp(32px, 5.5vw, 44px);
+      color: var(--bone);
+      text-align: center;
+      margin: 0 0 32px;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+    .threshold-body {
+      font-size: clamp(17px, 2.6vw, 19px);
+      color: var(--bone-soft);
+      text-align: center;
+      max-width: 520px;
+      margin: 0 auto 20px;
+      line-height: 1.6;
+    }
+    .threshold-body-soft {
+      color: var(--bone-muted);
+      font-style: italic;
+      margin-bottom: 56px;
+    }
+    .threshold-cta-wrap { display: flex; justify-content: center; }
+
+    /* SEAL */
+    .seal-mark { display: flex; justify-content: center; margin: 16px 0 36px; }
+    .seal-circle {
+      width: 64px; height: 64px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: sealPulse 4s ease-in-out infinite;
+    }
+    .seal-inner {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: sealPulseInner 4s ease-in-out infinite;
+    }
+    @keyframes sealPulse {
+      0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow), 0 0 24px var(--gold-glow); }
+      50%      { box-shadow: 0 0 0 8px transparent, 0 0 48px var(--gold-glow); }
+    }
+    @keyframes sealPulseInner {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.4); opacity: 0.7; }
+    }
+    .seal-headline {
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+      font-size: clamp(40px, 7vw, 56px);
+      color: var(--gold);
+      text-align: center;
+      margin: 0 0 18px;
+      letter-spacing: -0.01em;
+    }
+    .seal-subtext {
+      font-style: italic;
+      font-size: clamp(16px, 2.5vw, 18px);
+      color: var(--bone-soft);
+      text-align: center;
+      max-width: 460px;
+      margin: 0 auto 48px;
+      line-height: 1.55;
+    }
+
+    /* TICKET */
+    .seal-ticket {
+      border: 1px solid var(--hairline);
+      background:
+        linear-gradient(180deg, rgba(201,169,97,0.04) 0%, rgba(201,169,97,0.01) 100%),
+        rgba(20, 17, 15, 0.5);
+      padding: 32px 28px 24px;
+      margin: 0 0 48px;
+      position: relative;
+    }
+    .seal-ticket::before, .seal-ticket::after {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      border: 1px solid var(--gold);
+    }
+    .seal-ticket::before {
+      top: -1px; left: -1px;
+      border-right: none; border-bottom: none;
+    }
+    .seal-ticket::after {
+      bottom: -1px; right: -1px;
+      border-left: none; border-top: none;
+    }
+    .ticket-meta {
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px dashed var(--hairline);
+    }
+    .ticket-record {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin: 0 0 24px;
+    }
+    .ticket-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 24px;
+      align-items: baseline;
+      opacity: 0;
+      animation: ticketRowFade 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes ticketRowFade {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .ticket-row dt {
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin: 0;
+    }
+    .ticket-row dd {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: clamp(15px, 2.2vw, 17px);
+      color: var(--bone);
+      margin: 0;
+      line-height: 1.4;
+    }
+    .ticket-footer {
+      text-align: center;
+      font-style: italic;
+      font-size: 12px;
+      color: var(--gold-dim);
+      letter-spacing: 0.08em;
+      padding-top: 16px;
+      border-top: 1px dashed var(--hairline);
+    }
+    @media (max-width: 480px) {
+      .ticket-row { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    /* LINKS */
+    .vortex-link, .vortex-link-soft {
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-style: italic;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 8px 0;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid transparent;
+      transition: all 300ms ease;
+      font-family: 'Cormorant Garamond', serif;
+    }
+    .vortex-link:hover, .vortex-link-soft:hover { border-bottom-color: var(--gold); }
+    .vortex-link-soft { color: var(--bone-muted); }
+
+    /* BANNER */
+    .vortex-banner {
+      border: 1px solid var(--hairline);
+      border-left: 2px solid var(--gold);
+      padding: 22px 26px;
+      margin-bottom: 40px;
+      background: rgba(20, 17, 15, 0.5);
+      animation: stageFade 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .vortex-banner-meta {
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .vortex-banner-action {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      color: var(--bone);
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    .vortex-banner-action strong {
+      font-weight: 500;
+      color: var(--gold-dim);
+      letter-spacing: 0.04em;
+      font-size: 10px;
+      text-transform: uppercase;
+      font-family: 'Playfair Display', serif;
+      margin-right: 12px;
+    }
+    .vortex-banner-buttons {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* FOOTER */
+    .vortex-footer {
+      margin-top: 88px;
+      padding-top: 28px;
+      border-top: 1px solid var(--hairline);
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+
+    /* ACCESSIBILITY */
+    @media (prefers-reduced-motion: reduce) {
+      .stage-fade, .vortex-chip, .seal-circle, .seal-inner,
+      .threshold-line, .ticket-row, .progress-station, .vortex-banner {
+        animation: none !important;
+      }
+      .vortex-chip, .vortex-cta, .station-dot { transition: none !important; }
+      .vortex-chip { opacity: 1 !important; }
+      .ticket-row { opacity: 1 !important; }
+    }
+    button:focus-visible, .vortex-cta:focus-visible, a.vortex-cta:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 4px;
+    }
+    button { font-family: inherit; }
+
+    @media (max-width: 520px) {
+      .vortex-progress { padding: 0 4px; max-width: 360px; }
+      .station-numeral { display: none; }
+      .vortex-chips { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="vortex-frame">
+    <header class="vortex-header">
+      <div class="vortex-mark">VB.Clarke · The Atelier Haus®</div>
+      <h1 class="vortex-title">The Burnout Vortex</h1>
+      <div class="vortex-subtitle">Trigger · Response · Regulation · Repair · Boundary</div>
+    </header>
+
+    <div id="vortex-content"></div>
+
+    <footer class="vortex-footer">
+      The Burnout Transit Map™ · The Burnout Vortex Mirror™ · © VB.Clarke
+    </footer>
+  </div>
+
+  <script>
+    /* ============================================================
+       © VB.Clarke™ · The Atelier Haus™
+       The Burnout Vortex Mirror™ · The Burnout Transit Map™
+       All route schema & pattern logic asserted as © VB.Clarke™
+       ============================================================ */
+
+    /* ---------- IP-FAITHFUL TAXONOMY (sourced from the Burnout Transit Map) ---------- */
+    const TRIGGERS = [
+      "Overgiving","People Pleasing","Sleep Debt","Perfectionism","Chaos Hours",
+      "Caffeine Loop","Noise Overload","Multitasking","Open Loops","Poor Conflict",
+      "Brief / Role Drift","Scope Creep","Care Load","Financial Stress"
+    ];
+    const BODY_HINTS = [
+      "Tight Chest","Shallow Breath","Jaw Clench","Shoulder Lock","Gut Churn",
+      "Headache","Hot / Cold","Tremor","Tunnel Vision","Numbness",
+      "Brain Fog","Irritable","Tearful"
+    ];
+    const THOUGHTS = [
+      "Catastrophizing","All or Nothing","Shoulds","Mindreading","Personalizing",
+      "Over-Responsible","Imposter Syndrome","Scarcity","Urgency Myth","Perfection Script"
+    ];
+    const REGULATION = [
+      "Box Breathing × 4","Orient · Vagus","EFT Tapping","Drop Shoulders",
+      "Unclench Jaw","Shake · Long Exhale","Walk Outside","Hip Stretch",
+      "Sip Water","Cold Wrists"
+    ];
+    const REPAIR = [
+      "Ask for help","Rescope · Say no","Time off · Micro Break","Nap · Reset",
+      "Delegate · Reduce Inputs","Clarify Brief","Calendar block · 1 Task",
+      "Batch Email","Tech Sabbath"
+    ];
+    const BOUNDARIES = [
+      "Office Hours Only","Meeting Cap","Deep Work · DND","Phone Off · Focus",
+      "Auto-Reply Emails","No Weekend Work","Hard Lunch","AM Focus Block",
+      "Meeting-free Wed","End Work On Time","Family Time Block","Gym · Non-Negotiable",
+      "Digital Sunset","Social Media Cap","\u201CNot Available\u201D Template"
+    ];
+
+    /* ---------- CONFIG ---------- */
+    const STORAGE_KEY = "atelier_vortex_seal_v2";
+    const RETURN_WINDOW_HOURS = 24;
+    const HANDOFF_URL = "https://theburnoutsignal.substack.com";
+
+    const ORDER = ["threshold","trigger","body","thoughts","regulation","repair","boundary","seal"];
+
+    const STAGE_META = {
+      trigger:    { numeral: "I",   name: "Trigger",     intro: "What activated the loop. Notice as many as are true.", mode: "multi",  options: TRIGGERS },
+      body:       { numeral: "II",  name: "Body Hints",  intro: "What your body did before your mind named it.",         mode: "multi",  options: BODY_HINTS },
+      thoughts:   { numeral: "III", name: "Thoughts",    intro: "Clock the story your mind ran.",                        mode: "multi",  options: THOUGHTS },
+      regulation: { numeral: "IV",  name: "Regulation",  intro: "Regulation comes first. Choose one move — before any fix.", mode: "single", options: REGULATION },
+      repair:     { numeral: "V",   name: "Repair",      intro: "Now choose one repair. Doable today.",                  mode: "single", options: REPAIR },
+      boundary:   { numeral: "VI",  name: "Boundary",    intro: "Close the sequence. The clean line you'll use next time.", mode: "single", options: BOUNDARIES }
+    };
+
+    /* ---------- STATE ---------- */
+    const state = {
+      stage: "threshold",
+      triggers: [],
+      body: [],
+      thoughts: [],
+      regulation: "",
+      repair: "",
+      boundary: "",
+      openSeal: null
+    };
+
+    /* ---------- HELPERS ---------- */
+    const root = document.getElementById("vortex-content");
+    const escapeHTML = (s) => String(s).replace(/[&<>"']/g, c => (
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
+    ));
+
+    function loadOpenSeal() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed.completed) return null;
+        const ageMs = Date.now() - parsed.timestamp;
+        if (ageMs < RETURN_WINDOW_HOURS * 3600 * 1000) return parsed;
+        return null;
+      } catch { return null; }
+    }
+
+    function canAdvance() {
+      switch (state.stage) {
+        case "threshold": return true;
+        case "trigger":   return state.triggers.length > 0;
+        case "body":      return state.body.length > 0;
+        case "thoughts":  return state.thoughts.length > 0;
+        case "regulation":return !!state.regulation;
+        case "repair":    return !!state.repair;
+        case "boundary":  return !!state.boundary;
+        default: return true;
+      }
+    }
+
+    function goNext() {
+      const idx = ORDER.indexOf(state.stage);
+      if (state.stage === "boundary") {
+        sealCommitment();
+      } else if (idx < ORDER.length - 1) {
+        state.stage = ORDER[idx + 1];
+        render();
+      }
+    }
+    function goBack() {
+      const idx = ORDER.indexOf(state.stage);
+      if (idx > 0) { state.stage = ORDER[idx - 1]; render(); }
+    }
+    function sealCommitment() {
+      const seal = {
+        triggers: state.triggers,
+        body: state.body,
+        thoughts: state.thoughts,
+        regulation: state.regulation,
+        repair: state.repair,
+        boundary: state.boundary,
+        timestamp: Date.now(),
+        completed: false
+      };
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(seal)); } catch {}
+      state.stage = "seal";
+      render();
+    }
+    function markComplete() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          parsed.completed = true;
+          parsed.completedAt = Date.now();
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+        }
+      } catch {}
+      state.openSeal = null;
+      render();
+    }
+    function dismissBanner() { state.openSeal = null; render(); }
+    function resetAll() {
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
+      Object.assign(state, {
+        stage: "threshold", triggers: [], body: [], thoughts: [],
+        regulation: "", repair: "", boundary: "", openSeal: null
+      });
+      render();
+    }
+
+    /* ---------- RENDER ---------- */
+    function render() {
+      let html = "";
+
+      // Progress line on selection stages
+      if (!["threshold","seal"].includes(state.stage)) {
+        html += renderProgress();
+      }
+
+      // Return banner only on threshold
+      if (state.stage === "threshold" && state.openSeal) {
+        html += renderBanner(state.openSeal);
+      }
+
+      if (state.stage === "threshold") html += renderThreshold();
+      else if (state.stage === "seal") html += renderSeal();
+      else html += renderSelection(state.stage);
+
+      root.innerHTML = html;
+      attachListeners();
+    }
+
+    function renderProgress() {
+      const stages = ["trigger","body","thoughts","regulation","repair","boundary"];
+      const numerals = ["I","II","III","IV","V","VI"];
+      const currentIdx = stages.indexOf(state.stage);
+      let stationsHTML = "";
+      stages.forEach((s, i) => {
+        const cls = i < currentIdx ? "passed" : i === currentIdx ? "current" : "ahead";
+        stationsHTML += `
+          <div class="progress-station ${cls}">
+            <div class="station-dot"></div>
+            <div class="station-numeral">${numerals[i]}</div>
+          </div>`;
+      });
+      return `
+        <nav class="vortex-progress" aria-label="Protocol progress">
+          <div class="progress-track"></div>
+          ${stationsHTML}
+        </nav>`;
+    }
+
+    function renderBanner(seal) {
+      const ageHours = Math.max(1, Math.floor((Date.now() - seal.timestamp) / 3600000));
+      return `
+        <div class="vortex-banner">
+          <div class="vortex-banner-meta">An open seal · ${ageHours}h ago</div>
+          <div class="vortex-banner-action">
+            <strong>Repair</strong> ${escapeHTML(seal.repair)}<br>
+            <strong>Boundary</strong> ${escapeHTML(seal.boundary)}
+          </div>
+          <div class="vortex-banner-buttons">
+            <button class="vortex-link" data-action="mark-complete">Mark complete</button>
+            <button class="vortex-link-soft" data-action="dismiss-banner">Continue without</button>
+          </div>
+        </div>`;
+    }
+
+    function renderThreshold() {
+      return `
+        <section class="vortex-stage stage-fade" aria-labelledby="threshold-heading">
+          <div class="threshold-mark" aria-hidden="true"><div class="threshold-line"></div></div>
+          <h2 class="threshold-headline" id="threshold-heading">Spot the loop. Break it once.</h2>
+          <p class="threshold-body">Six stations. Trigger to Response, Response to Repair, Repair to Boundary. You won't be diagnosed. You'll be witnessed.</p>
+          <p class="threshold-body threshold-body-soft">Regulation comes <em>first</em> — breathe, ground, water, step outside — before any fix or action. The pattern gets obvious. Then it gets easier to interrupt.</p>
+          <div class="threshold-cta-wrap">
+            <button class="vortex-cta active" data-action="begin">Enter the Vortex →</button>
+          </div>
+        </section>`;
+    }
+
+    function renderSelection(stageKey) {
+      const meta = STAGE_META[stageKey];
+      const isMulti = meta.mode === "multi";
+      const value = state[stageKey === "trigger" ? "triggers" : stageKey];
+      const count = isMulti ? value.length : (value ? 1 : 0);
+      const isFinal = stageKey === "boundary";
+
+      let chipsHTML = "";
+      meta.options.forEach((opt, i) => {
+        const selected = isMulti ? value.includes(opt) : value === opt;
+        const delay = Math.min(i * 40, 480);
+        chipsHTML += `
+          <button class="vortex-chip ${selected ? "selected" : ""}"
+                  data-action="toggle-chip" data-value="${escapeHTML(opt)}"
+                  aria-pressed="${selected}"
+                  style="animation-delay: ${delay}ms;">
+            <span class="chip-mark" aria-hidden="true">${selected ? "·" : ""}</span>
+            <span class="chip-label">${escapeHTML(opt)}</span>
+          </button>`;
+      });
+
+      const valid = canAdvance();
+      const ctaLabel = isFinal ? "Seal the Sequence →" : "Continue →";
+
+      return `
+        <section class="vortex-stage stage-fade" aria-labelledby="${stageKey}-heading">
+          <div class="stage-numeral">${meta.numeral}</div>
+          <h2 class="stage-name" id="${stageKey}-heading">${meta.name}</h2>
+          <p class="stage-intro">${meta.intro}</p>
+          <div class="stage-mode-hint">${
+            isMulti
+              ? `Select all that apply${count > 0 ? ` · ${count} selected` : ""}`
+              : "Select one"
+          }</div>
+          <div class="vortex-chips">${chipsHTML}</div>
+          <div class="vortex-cta-row">
+            <button class="vortex-cta ${valid ? "active" : "is-disabled"}"
+                    data-action="continue" ${valid ? "" : "disabled aria-disabled='true'"}>
+              ${ctaLabel}
+            </button>
+            <button class="vortex-link-soft" data-action="back">← Back</button>
+          </div>
+        </section>`;
+    }
+
+    function renderSeal() {
+      const lines = [
+        { label: "Trigger",   value: state.triggers.join(" · ") },
+        { label: "Body",      value: state.body.join(" · ") },
+        { label: "Thoughts",  value: state.thoughts.join(" · ") },
+        { label: "Regulation",value: state.regulation },
+        { label: "Repair",    value: state.repair },
+        { label: "Boundary",  value: state.boundary }
+      ];
+      let rowsHTML = "";
+      lines.forEach((line, i) => {
+        rowsHTML += `
+          <div class="ticket-row" style="animation-delay: ${i * 120 + 200}ms;">
+            <dt>${line.label}</dt>
+            <dd>${escapeHTML(line.value || "—")}</dd>
+          </div>`;
+      });
+      const date = new Date().toLocaleDateString(undefined, {
+        year: "numeric", month: "long", day: "numeric"
+      });
+      return `
+        <section class="vortex-stage stage-fade" aria-labelledby="seal-heading">
+          <div class="seal-mark" aria-hidden="true">
+            <div class="seal-circle"><div class="seal-inner"></div></div>
+          </div>
+          <h2 class="seal-headline" id="seal-heading">Sealed.</h2>
+          <p class="seal-subtext">The sequence is yours. Regulation first — then repair, then boundary. Return here within 24 hours to mark it complete.</p>
+          <div class="seal-ticket">
+            <div class="ticket-meta">The Burnout Transit Map™ · Sequence</div>
+            <dl class="ticket-record">${rowsHTML}</dl>
+            <div class="ticket-footer">${date}</div>
+          </div>
+          <div class="vortex-cta-row">
+            <a class="vortex-cta active" href="${HANDOFF_URL}" target="_top" rel="noopener noreferrer">The Burnout Signal →</a>
+            <button class="vortex-link-soft" data-action="reset">Re-enter the Vortex</button>
+          </div>
+        </section>`;
+    }
+
+    /* ---------- EVENT BINDING ---------- */
+    function attachListeners() {
+      document.querySelectorAll("[data-action]").forEach(el => {
+        el.addEventListener("click", handleAction);
+      });
+    }
+
+    function handleAction(e) {
+      const action = e.currentTarget.dataset.action;
+      switch (action) {
+        case "begin": goNext(); break;
+        case "continue": if (canAdvance()) goNext(); break;
+        case "back": goBack(); break;
+        case "reset": resetAll(); break;
+        case "mark-complete": markComplete(); break;
+        case "dismiss-banner": dismissBanner(); break;
+        case "toggle-chip": toggleChip(e.currentTarget.dataset.value, e.currentTarget); break;
+      }
+    }
+
+    function toggleChip(value, chipEl) {
+      const stageKey = state.stage;
+      const meta = STAGE_META[stageKey];
+      if (!meta) return;
+
+      if (meta.mode === "multi") {
+        const listKey = stageKey === "trigger" ? "triggers" : stageKey;
+        const list = state[listKey];
+        const idx = list.indexOf(value);
+        if (idx > -1) list.splice(idx, 1);
+        else list.push(value);
+        updateChipUI(chipEl, list.includes(value));
+        updateMultiCount(list.length);
+      } else {
+        const current = state[stageKey];
+        const newValue = current === value ? "" : value;
+        state[stageKey] = newValue;
+        // Clear all chip selections, then mark the right one
+        document.querySelectorAll(".vortex-chip").forEach(c => updateChipUI(c, c.dataset.value === newValue));
+      }
+      updateContinueButton();
+    }
+
+    function updateChipUI(chipEl, selected) {
+      chipEl.classList.toggle("selected", selected);
+      chipEl.setAttribute("aria-pressed", String(selected));
+      const mark = chipEl.querySelector(".chip-mark");
+      if (mark) mark.textContent = selected ? "·" : "";
+    }
+
+    function updateMultiCount(count) {
+      const hint = document.querySelector(".stage-mode-hint");
+      if (hint) {
+        hint.textContent = `Select all that apply${count > 0 ? ` · ${count} selected` : ""}`;
+      }
+    }
+
+    function updateContinueButton() {
+      const btn = document.querySelector('[data-action="continue"]');
+      if (!btn) return;
+      const valid = canAdvance();
+      btn.classList.toggle("active", valid);
+      btn.classList.toggle("is-disabled", !valid);
+      if (valid) {
+        btn.removeAttribute("disabled");
+        btn.removeAttribute("aria-disabled");
+      } else {
+        btn.setAttribute("disabled", "");
+        btn.setAttribute("aria-disabled", "true");
+      }
+    }
+
+    /* ---------- INIT ---------- */
+    state.openSeal = loadOpenSeal();
+    render();
+  </script>
+</body>
+</html>
