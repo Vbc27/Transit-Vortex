@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The threshold — a quiet pause between the Vortex Seal and the deeper work of the Burnout to Breakthrough Workbook. © VB.Clarke / The Atelier Haus®.">
+  <title>The Threshold · The Atelier Haus®</title>
+
+  <!--
+    ============================================================
+    THE THRESHOLD
+    A quiet interstitial between the Vortex Seal
+    and the Burnout to Breakthrough Workbook.
+    ============================================================
+    © VB.Clarke™ · The Atelier Haus®
+    The Burnout Vortex Mirror™ · The Burnout Transit Map™
+    ============================================================
+  -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --obsidian: #0a0908;
+      --gold: #c9a961;
+      --gold-dim: #8a7444;
+      --gold-glow: rgba(201, 169, 97, 0.18);
+      --teal-deep: #16302f;
+      --bone: #f3ede1;
+      --bone-soft: rgba(243, 237, 225, 0.85);
+      --bone-muted: rgba(243, 237, 225, 0.62);
+      --hairline: rgba(201, 169, 97, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% 0%, var(--teal-deep) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 100%, rgba(201,169,97,0.06) 0%, transparent 50%),
+        var(--obsidian);
+      color: var(--bone);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      padding: clamp(40px, 8vw, 96px) clamp(16px, 4vw, 32px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+      animation: pageEnter 1400ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes pageEnter {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    body::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(201,169,97,0.04) 1px, transparent 0);
+      background-size: 24px 24px;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .threshold-frame {
+      width: 100%;
+      max-width: 560px;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    /* HEADER */
+    .threshold-header {
+      margin-bottom: 80px;
+    }
+    .brand-mark {
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+
+    /* THE THRESHOLD MARK — interrupted line with a pulsing dot at the break */
+    .threshold-mark {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 0 auto 56px;
+      max-width: 280px;
+    }
+    .threshold-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-dim), var(--gold));
+    }
+    .threshold-line.right {
+      background: linear-gradient(to left, transparent, var(--gold-dim), var(--gold));
+    }
+    .threshold-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 0 var(--gold-glow), 0 0 16px var(--gold-glow);
+      animation: thresholdPulse 3.6s ease-in-out infinite;
+    }
+    @keyframes thresholdPulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 var(--gold-glow), 0 0 16px var(--gold-glow);
+      }
+      50% {
+        transform: scale(1.4);
+        box-shadow: 0 0 0 4px transparent, 0 0 32px var(--gold-glow);
+      }
+    }
+
+    /* LABEL */
+    .threshold-label {
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 48px;
+      animation: lineFade 1600ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+    }
+
+    /* BODY LINES — each fades in with a slow stagger */
+    .threshold-lines {
+      margin-bottom: 80px;
+    }
+    .threshold-line-text {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: clamp(24px, 4.5vw, 36px);
+      color: var(--bone);
+      line-height: 1.3;
+      margin: 0 0 18px;
+      letter-spacing: -0.005em;
+      opacity: 0;
+      animation: lineFade 1400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .threshold-line-text:nth-child(1) { animation-delay: 600ms; }
+    .threshold-line-text:nth-child(2) { animation-delay: 1400ms; }
+    .threshold-line-text:nth-child(3) {
+      animation-delay: 2400ms;
+      font-style: italic;
+      color: var(--bone-soft);
+      margin-top: 36px;
+      font-size: clamp(20px, 3.5vw, 28px);
+    }
+    @keyframes lineFade {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CTA */
+    .threshold-cta-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-items: center;
+      opacity: 0;
+      animation: lineFade 1400ms cubic-bezier(0.22, 1, 0.36, 1) 3400ms forwards;
+    }
+    .threshold-cta {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 18px 40px;
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 400ms cubic-bezier(0.22, 1, 0.36, 1);
+      text-decoration: none;
+      text-align: center;
+    }
+    .threshold-cta:hover {
+      background: var(--gold);
+      color: var(--obsidian);
+      letter-spacing: 0.08em;
+    }
+    .threshold-cta:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 4px;
+    }
+
+    .threshold-link-soft {
+      color: var(--bone-muted);
+      font-style: italic;
+      font-size: 15px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid transparent;
+      transition: all 300ms ease;
+      padding: 6px 0;
+    }
+    .threshold-link-soft:hover {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    /* FOOTER */
+    .threshold-footer {
+      margin-top: 96px;
+      padding-top: 28px;
+      border-top: 1px solid var(--hairline);
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      opacity: 0;
+      animation: lineFade 1400ms cubic-bezier(0.22, 1, 0.36, 1) 4000ms forwards;
+    }
+
+    /* ACCESSIBILITY */
+    @media (prefers-reduced-motion: reduce) {
+      body, .threshold-label, .threshold-line-text,
+      .threshold-cta-wrap, .threshold-footer, .threshold-dot {
+        animation: none !important;
+      }
+      .threshold-line-text, .threshold-cta-wrap, .threshold-footer {
+        opacity: 1 !important;
+      }
+      .threshold-cta { transition: none !important; }
+    }
+
+    @media (max-width: 480px) {
+      .threshold-mark { max-width: 200px; }
+      .threshold-header { margin-bottom: 56px; }
+      .threshold-lines { margin-bottom: 56px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="threshold-frame">
+
+    <header class="threshold-header">
+      <div class="brand-mark">VB.Clarke · The Atelier Haus®</div>
+    </header>
+
+    <div class="threshold-mark" aria-hidden="true">
+      <div class="threshold-line"></div>
+      <div class="threshold-dot"></div>
+      <div class="threshold-line right"></div>
+    </div>
+
+    <div class="threshold-label">The Threshold</div>
+
+    <div class="threshold-lines">
+      <p class="threshold-line-text">You named the loop.</p>
+      <p class="threshold-line-text">You sealed it.</p>
+      <p class="threshold-line-text">When you're ready, the work continues.</p>
+    </div>
+
+    <div class="threshold-cta-wrap">
+      <a class="threshold-cta"
+         href="https://www.theatelierhaus.com/product-page/burnout-to-breakthrough-the-atelier-haus-workbook"
+         target="_top"
+         rel="noopener noreferrer">
+        Burnout to Breakthrough →
+      </a>
+      <a class="threshold-link-soft"
+         href="https://www.theatelierhaus.com/"
+         target="_top"
+         rel="noopener noreferrer">
+        Return home
+      </a>
+    </div>
+
+    <footer class="threshold-footer">
+      The Atelier Haus® · The Burnout Transit Map™ · © VB.Clarke
+    </footer>
+  </div>
+</body>
+</html>
