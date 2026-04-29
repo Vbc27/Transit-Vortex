@@ -1,33 +1,46 @@
 <!DOCTYPE html>
+<!--
+  ============================================================
+  The Atelier Haus® | Burnout Transit Dashboard
+  © VB.Clarke™ — All Rights Reserved
+  The Atelier Haus® is a registered trademark of VB.Clarke™
+  Frameworks, methodologies, route schema, signal logic,
+  and all content © VB.Clarke™ / The Atelier Haus®
+  Unauthorised reproduction or distribution is prohibited.
+  The Burnout Transit Map™, Transit|Vortex System™,
+  The Cathedral System™, Signal Rights Framework™,
+  and all named frameworks are proprietary IP of VB.Clarke™
+  ============================================================
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Atelier Haus™ | Burnout Transit Dashboard</title>
+  <title>The Atelier Haus® | Burnout Transit Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --obsidian: #080a0e;
-      --stone: #0f1218;
-      --stone-mid: #161c24;
-      --stone-light: #1e2630;
+      --obsidian: #0d1117;
+      --stone: #1a2130;
+      --stone-mid: #1e2a3a;
+      --stone-light: #243244;
       --teal: #4ECFD4;
-      --teal-dim: rgba(78, 207, 212, 0.15);
-      --teal-glow: rgba(78, 207, 212, 0.4);
+      --teal-dim: rgba(78, 207, 212, 0.18);
+      --teal-glow: rgba(78, 207, 212, 0.5);
       --gold: #D7B56D;
-      --gold-dim: rgba(215, 181, 109, 0.15);
-      --gold-glow: rgba(215, 181, 109, 0.5);
+      --gold-dim: rgba(215, 181, 109, 0.18);
+      --gold-glow: rgba(215, 181, 109, 0.6);
       --fire: #E8621A;
       --fire-dim: rgba(232, 98, 26, 0.15);
-      --mist: rgba(255, 255, 255, 0.04);
-      --text-primary: #F0EDE8;
-      --text-secondary: #9BA8B5;
-      --text-dim: #5C6875;
-      --border: rgba(78, 207, 212, 0.12);
-      --border-gold: rgba(215, 181, 109, 0.2);
+      --mist: rgba(255, 255, 255, 0.07);
+      --text-primary: #FFFFFF;
+      --text-secondary: #D0D8E4;
+      --text-dim: #8A9BB0;
+      --border: rgba(78, 207, 212, 0.2);
+      --border-gold: rgba(215, 181, 109, 0.3);
     }
 
     * { box-sizing: border-box; }
@@ -38,6 +51,7 @@
       color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
+      font-size: 15px;
     }
 
     /* ATMOSPHERIC BACKGROUND */
@@ -46,9 +60,9 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(78,207,212,0.06) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 60% at 10% 50%, rgba(215,181,109,0.04) 0%, transparent 60%),
-        radial-gradient(ellipse 30% 50% at 90% 30%, rgba(232,98,26,0.04) 0%, transparent 60%);
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(78,207,212,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 50%, rgba(215,181,109,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 30% 50% at 90% 30%, rgba(232,98,26,0.05) 0%, transparent 60%);
       pointer-events: none;
       z-index: 0;
     }
@@ -136,20 +150,20 @@
 
     /* PANELS */
     .panel {
-      background: linear-gradient(135deg, var(--stone) 0%, var(--stone-mid) 100%);
+      background: linear-gradient(135deg, rgba(26,33,48,0.97) 0%, rgba(30,42,58,0.97) 100%);
       border-radius: 2px;
       overflow: hidden;
     }
 
     .panel-header {
-      background: linear-gradient(90deg, var(--stone-mid) 0%, rgba(78,207,212,0.05) 100%);
+      background: linear-gradient(90deg, rgba(30,42,58,0.98) 0%, rgba(78,207,212,0.08) 100%);
       border-bottom: 1px solid var(--border);
       padding: 1rem 1.5rem;
       display: flex; align-items: center; gap: 10px;
     }
 
     .panel-header-gold {
-      background: linear-gradient(90deg, var(--stone-mid) 0%, rgba(215,181,109,0.05) 100%);
+      background: linear-gradient(90deg, rgba(30,42,58,0.98) 0%, rgba(215,181,109,0.08) 100%);
       border-bottom: 1px solid var(--border-gold);
       padding: 1rem 1.5rem;
       display: flex; align-items: center; gap: 10px;
@@ -173,7 +187,7 @@
 
     /* INTRO BLOCK */
     .intro-panel {
-      background: linear-gradient(135deg, var(--stone) 0%, rgba(78,207,212,0.03) 50%, var(--stone-mid) 100%);
+      background: linear-gradient(135deg, rgba(26,33,48,0.97) 0%, rgba(78,207,212,0.05) 50%, rgba(30,42,58,0.97) 100%);
       border: 1px solid var(--border);
       border-radius: 2px;
       padding: 2rem;
@@ -185,17 +199,17 @@
       position: absolute;
       top: 1.5rem; right: 2rem;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
+      font-size: 13px;
       letter-spacing: 0.3em;
-      color: var(--text-dim);
-      opacity: 0.5;
+      color: var(--text-secondary);
+      opacity: 0.6;
     }
 
     /* SLIDERS */
     .slider-label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.1em;
+      font-size: 15px;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--text-secondary);
     }
@@ -223,7 +237,7 @@
 
     .score-badge {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 400;
       color: var(--teal);
       min-width: 20px;
@@ -251,19 +265,19 @@
 
     .tab-btn {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
+      font-size: 15px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 5px 10px;
+      padding: 6px 12px;
       border: 1px solid transparent;
       background: transparent;
-      color: var(--text-dim);
+      color: var(--text-secondary);
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.2s;
       border-radius: 1px;
     }
-    .tab-btn:hover { color: var(--text-secondary); border-color: var(--border); }
+    .tab-btn:hover { color: var(--text-primary); border-color: var(--border); }
     .tab-btn.active {
       background: var(--gold-dim);
       border-color: var(--border-gold);
@@ -342,7 +356,7 @@
 
     /* RECOVERY PANEL */
     .recovery-panel {
-      background: linear-gradient(135deg, rgba(8,10,14,0.95) 0%, rgba(215,181,109,0.04) 100%);
+      background: linear-gradient(135deg, rgba(26,33,48,0.97) 0%, rgba(215,181,109,0.06) 100%);
       border: 1px solid var(--border-gold);
       border-radius: 2px;
       padding: 1.5rem;
@@ -360,16 +374,16 @@
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      padding: 10px 12px;
-      background: rgba(215,181,109,0.04);
-      border: 1px solid rgba(215,181,109,0.12);
+      padding: 12px 14px;
+      background: rgba(215,181,109,0.07);
+      border: 1px solid rgba(215,181,109,0.2);
       border-radius: 1px;
       margin-bottom: 8px;
     }
 
     /* LEGEND */
     .legend-panel {
-      background: var(--stone);
+      background: rgba(26,33,48,0.97);
       border: 1px solid var(--border);
       border-radius: 2px;
       padding: 1.5rem;
@@ -379,8 +393,8 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px;
-      background: var(--mist);
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
       border: 1px solid var(--border);
       border-radius: 1px;
     }
@@ -428,16 +442,19 @@
     /* INSIGHT BOX */
     .insight-box {
       background: var(--teal-dim);
-      border: 1px solid rgba(78,207,212,0.2);
+      border: 1px solid rgba(78,207,212,0.25);
       border-radius: 1px;
-      padding: 10px 14px;
+      padding: 12px 16px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 16px;
       color: var(--teal);
       letter-spacing: 0.03em;
     }
 
-    /* HEADINGS */
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', serif;
+    }
+
     .heading-display {
       font-family: 'Playfair Display', serif;
       letter-spacing: 0.02em;
@@ -449,19 +466,20 @@
     /* STATUS LINE */
     .status-line {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.2em;
+      font-size: 15px;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--text-dim);
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
       gap: 8px;
     }
     .status-dot {
-      width: 5px; height: 5px;
+      width: 6px; height: 6px;
       background: var(--teal);
       border-radius: 50%;
       box-shadow: 0 0 6px var(--teal);
+      flex-shrink: 0;
     }
 
     /* SEPARATOR */
@@ -492,7 +510,7 @@
         </div>
         <div>
           <h1 class="heading-display font-bold text-lg tracking-[0.15em]" style="color:var(--text-primary);">
-            THE ATELIER HAUS™
+            THE ATELIER HAUS®
           </h1>
           <div class="status-line mt-0.5">
             <span class="status-dot"></span>
@@ -500,10 +518,12 @@
           </div>
         </div>
       </div>
-      <div class="hidden md:flex items-center gap-6">
-        <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--text-dim);">TRANSIT MAP™</span>
-        <div style="width:1px; height:24px; background:var(--border-gold);"></div>
-        <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--gold);">© VB.CLARKE™</span>
+      <div class="flex items-center gap-6">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--text-dim);" class="hidden md:inline">TRANSIT MAP™</span>
+        <div style="width:1px; height:24px; background:var(--border-gold);" class="hidden md:block"></div>
+        <a href="https://www.theatelierhaus.com/single-project" style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); text-decoration:none; border:1px solid var(--border-gold); padding:8px 16px; border-radius:1px; transition:all 0.2s; white-space:nowrap;" onmouseover="this.style.background='rgba(215,181,109,0.1)'" onmouseout="this.style.background='transparent'">
+          ← Return to Haus
+        </a>
       </div>
     </div>
   </nav>
@@ -520,16 +540,16 @@
               <span class="status-dot"></span>
               <span>System Orientation · Cathedral Framework Active</span>
             </div>
-            <h2 class="heading-display text-2xl font-bold mb-1" style="color:var(--teal);">
-              The Atelier Haus Burnout Transit System™
+            <h2 class="heading-display text-2xl font-bold mb-1" style="font-family:'Playfair Display',serif;" style="color:var(--teal);">
+              The Atelier Haus® Burnout Transit System™
             </h2>
           </div>
         </div>
         <div class="teal-separator"></div>
-        <p class="heading-cormorant text-base leading-relaxed" style="color:var(--text-secondary); font-size:1.05rem;">
+        <p class="heading-cormorant text-base leading-relaxed" style="color:var(--text-primary); font-size:1.15rem;">
           Burnout doesn't happen in a straight line — it happens like a city you get lost in. The Burnout Transit Map™ is not just a map or schematic diagram; it's the overhead wiring of how burnout actually runs through a life: every line, station and dead-end drawn from real patterns of overwork, numbness, people-pleasing, quiet rage and the urge to finally get off the wrong train.
         </p>
-        <p class="heading-cormorant mt-3 text-sm" style="color:var(--text-dim); font-style:italic;">
+        <p class="heading-cormorant mt-3 text-sm" style="color:var(--text-secondary); font-style:italic; font-size:1rem;">
           Use this dashboard to audit your signal flow, identify which lines are carrying the heaviest load, and discover the specific stations required to stabilise your system.
         </p>
         <div class="gold-separator"></div>
@@ -549,7 +569,7 @@
       <div class="panel circuit-border">
         <div class="panel-header">
           <div class="header-dot"></div>
-          <h3 class="heading-display font-bold" style="color:var(--text-primary); font-size:1rem; letter-spacing:0.05em;">Signal Flow Audit</h3>
+          <h3 class="heading-display font-bold" style="color:var(--text-primary); font-family:'Playfair Display',serif; font-size:1.2rem; letter-spacing:0.03em;">Signal Flow Audit</h3>
         </div>
         <div style="padding:8px 12px; background:rgba(78,207,212,0.04); border-bottom:1px solid var(--border);">
           <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.1em; color:var(--teal); text-transform:uppercase;">
@@ -564,7 +584,7 @@
         <div class="panel-header">
           <div class="header-dot"></div>
           <div>
-            <h3 class="heading-display font-bold" style="color:var(--text-primary); font-size:1rem; letter-spacing:0.05em;">Your Burnout Shape</h3>
+            <h3 class="heading-display font-bold" style="color:var(--text-primary); font-family:'Playfair Display',serif; font-size:1.2rem; letter-spacing:0.03em;">Your Burnout Shape</h3>
             <div class="status-line mt-0.5">
               <span>Real-time System Analysis</span>
             </div>
@@ -590,7 +610,7 @@
       <div class="panel circuit-border flex flex-col" style="min-height:580px;">
         <div class="panel-header-gold">
           <div class="header-dot-gold"></div>
-          <h3 class="heading-display font-bold" style="color:var(--text-primary); font-size:1rem; letter-spacing:0.05em;">Route Explorer</h3>
+          <h3 class="heading-display font-bold" style="color:var(--text-primary); font-family:'Playfair Display',serif; font-size:1.2rem; letter-spacing:0.03em;">Route Explorer</h3>
         </div>
 
         <!-- TABS -->
@@ -601,7 +621,7 @@
         <!-- ACTIVE LINE -->
         <div class="p-5 flex flex-col flex-grow">
           <div class="mb-5">
-            <h2 class="heading-display text-xl font-bold mb-1" id="active-line-title" style="color:var(--teal);">Trigger Line</h2>
+            <h2 class="heading-display text-xl font-bold mb-1" id="active-line-title" style="font-family:'Playfair Display',serif; font-size:1.4rem;" style="color:var(--teal);">Trigger Line</h2>
             <p style="font-family:'Cormorant Garamond',serif; font-size:0.95rem; color:var(--text-secondary); font-style:italic;" id="active-line-desc">
               External and behavioral catalysts: the "why" behind the stress.
             </p>
@@ -617,7 +637,7 @@
         <div class="flex items-center gap-3 mb-4">
           <div class="header-dot-gold"></div>
           <div>
-            <h3 class="heading-display font-bold" style="color:var(--gold); letter-spacing:0.08em; font-size:0.85rem; text-transform:uppercase;">
+            <h3 class="heading-display font-bold" style="color:var(--gold); font-family:'Playfair Display',serif; font-size:1.1rem; letter-spacing:0.05em;">
               Immediate Stabilisation Protocol
             </h3>
             <div class="status-line mt-0.5">
@@ -642,29 +662,29 @@
           <div class="legend-item">
             <div style="color:var(--teal);"><div class="shape-triangle"></div></div>
             <div>
-              <span style="font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); display:block;">Escalation Point</span>
-              <span style="font-family:'Cormorant Garamond',serif; font-size:11px; color:var(--text-dim); display:block; margin-top:2px;">Rising intensity signal</span>
+              <span style="font-family:'Playfair Display',serif; font-size:15px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-primary); display:block; font-weight:600;">Escalation Point</span>
+              <span style="font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--text-secondary); display:block; margin-top:4px;">Rising intensity signal</span>
             </div>
           </div>
           <div class="legend-item">
             <div style="color:#4B5563;"><div class="shape-hexagon" style="color:var(--text-secondary);"></div></div>
             <div>
-              <span style="font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); display:block;">High-Load Point</span>
-              <span style="font-family:'Cormorant Garamond',serif; font-size:11px; color:var(--text-dim); display:block; margin-top:2px;">System stress maximum</span>
+              <span style="font-family:'Playfair Display',serif; font-size:15px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-primary); display:block; font-weight:600;">High-Load Point</span>
+              <span style="font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--text-secondary); display:block; margin-top:4px;">System stress maximum</span>
             </div>
           </div>
           <div class="legend-item">
             <div style="color:var(--gold);"><div class="shape-diamond"></div></div>
             <div>
-              <span style="font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); display:block;">Identity Pivot</span>
-              <span style="font-family:'Cormorant Garamond',serif; font-size:11px; color:var(--text-dim); display:block; margin-top:2px;">Role / self shift required</span>
+              <span style="font-family:'Playfair Display',serif; font-size:15px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-primary); display:block; font-weight:600;">Identity Pivot</span>
+              <span style="font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--text-secondary); display:block; margin-top:4px;">Role / self shift required</span>
             </div>
           </div>
           <div class="legend-item">
             <div style="color:var(--teal);"><div class="shape-circle" style="background:var(--teal); width:10px; height:10px; box-shadow:0 0 6px var(--teal-glow);"></div></div>
             <div>
-              <span style="font-family:'JetBrains Mono',monospace; font-size:9px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); display:block;">Stabilisation</span>
-              <span style="font-family:'Cormorant Garamond',serif; font-size:11px; color:var(--text-dim); display:block; margin-top:2px;">Grounding, repair, baseline</span>
+              <span style="font-family:'Playfair Display',serif; font-size:15px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-primary); display:block; font-weight:600;">Stabilisation</span>
+              <span style="font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--text-secondary); display:block; margin-top:4px;">Grounding, repair, baseline</span>
             </div>
           </div>
         </div>
@@ -675,7 +695,7 @@
 
   <footer class="content py-8 mt-6 text-center" style="border-top:1px solid var(--border); background:var(--stone);">
     <div style="font-family:'Playfair Display',serif; font-size:14px; color:var(--gold); letter-spacing:0.15em; margin-bottom:6px;">
-      THE ATELIER HAUS™
+      THE ATELIER HAUS®
     </div>
     <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.2em; color:var(--text-dim); text-transform:uppercase;">
       © VB.Clarke™ · The Cathedral System™ · All route schema &amp; pattern logic asserted as © VB.Clarke™
@@ -867,12 +887,12 @@
           <div class="station-icon">${shapeHTML}</div>
           <div style="flex:1; min-width:0;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;">
-              <h4 style="font-family:'Playfair Display',serif; font-weight:600; font-size:0.9rem; color:var(--text-primary);">${station.name}</h4>
+              <h4 style="font-family:'Playfair Display',serif; font-weight:700; font-size:1.15rem; color:var(--text-primary);">${station.name}</h4>
               <span class="station-type-badge" style="color:${typeColor}; background:${typeBg}; border:1px solid ${typeColor}30;">
                 ${station.type.replace("-"," ")}
               </span>
             </div>
-            <p style="font-family:'Cormorant Garamond',serif; font-size:0.88rem; color:var(--text-secondary); margin-top:3px; line-height:1.5;">${station.desc}</p>
+            <p style="font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--text-secondary); margin-top:3px; line-height:1.5;">${station.desc}</p>
           </div>
         `;
         item.style.borderLeft = `2px solid ${line.color}40`;
@@ -996,8 +1016,8 @@
             <div class="shape-diamond" style="background:var(--gold); width:8px; height:8px;"></div>
           </div>
           <div>
-            <span style="font-family:'Playfair Display',serif; font-size:0.9rem; font-weight:600; color:var(--text-primary); display:block;">${action.name}</span>
-            <span style="font-family:'Cormorant Garamond',serif; font-size:0.85rem; color:var(--text-secondary); display:block; margin-top:2px;">${action.desc}</span>
+            <span style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:600; color:var(--text-primary); display:block;">${action.name}</span>
+            <span style="font-family:'Cormorant Garamond',serif; font-size:0.95rem; color:var(--text-secondary); display:block; margin-top:2px;">${action.desc}</span>
           </div>
         `;
         recoveryList.appendChild(li);
